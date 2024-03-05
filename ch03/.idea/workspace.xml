@@ -6,44 +6,27 @@
   <component name="ChangeListManager">
     <list default="true" id="ca253526-b2a6-44ec-aefc-4dfaf729a3d1" name="Changes" comment="">
       <change afterPath="$PROJECT_DIR$/../../GitTest" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ch01/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ch01/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ch01/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ch01/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ch01/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ch01/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ch01/src/main/java/kr/co/ch01/App.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ch01/src/test/java/kr/co/ch01/AppTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ch02/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ch02/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ch02/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ch02/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ch02/src/main/java/kr/co/ch02/App.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ch02/src/main/java/kr/co/ch02/config/AppConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ch02/src/main/java/kr/co/ch02/sub1/Greeting.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ch02/src/main/java/kr/co/ch02/sub1/Hello.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ch02/src/main/java/kr/co/ch02/sub1/Welcome.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ch02/src/main/java/kr/co/ch02/sub2/CPU.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ch02/src/main/java/kr/co/ch02/sub2/Computer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ch02/src/main/java/kr/co/ch02/sub2/Hdd.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ch02/src/main/java/kr/co/ch02/sub2/Ram.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ch02/src/test/java/kr/co/ch02/AppTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/kr/co/ch03/App.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/kr/co/ch03/BasicService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/kr/co/ch03/LogAdvice.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/kr/co/ch03/config/AppConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/kr/co/ch03/AppTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ch04/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ch04/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ch04/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ch04/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ch04/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ch04/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ch04/src/main/java/kr/co/ch04/config/AppConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ch04/src/main/java/kr/co/ch04/config/MyWebAppInitializer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ch04/src/main/webapp/WEB-INF/views/hello.jsp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ch04/src/main/webapp/WEB-INF/web.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ch04/src/main/webapp/index.jsp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../DB/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../DB/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../DB/SQLCh02.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../../DB/SQLCh02.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../DB/SQLCh03.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../../DB/SQLCh03.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../HTML-CSS" beforeDir="false" afterPath="$PROJECT_DIR$/../../HTML-CSS" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../JAVA" beforeDir="false" afterPath="$PROJECT_DIR$/../../JAVA" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ch02/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../ch02/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ch02/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../ch02/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/kr/co/ch03/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/kr/co/ch03/App.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../json-20231013.jar" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../../lombok.jar" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../../mamber.json" beforeDir="false" />
@@ -62,7 +45,8 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
   </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="QODANA_PROBLEMS_VIEW_TAB" />
@@ -78,24 +62,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.App.executor": "Run",
-    "Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
-    "kotlin-language-version-configured": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.App.executor&quot;: &quot;Run&quot;,
+    &quot;Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -116,6 +100,13 @@
       <workItem from="1709520125573" duration="1432000" />
       <workItem from="1709521566468" duration="37000" />
       <workItem from="1709521609087" duration="1985000" />
+      <workItem from="1709523925662" duration="137000" />
+      <workItem from="1709524148208" duration="264000" />
+      <workItem from="1709524419530" duration="51000" />
+      <workItem from="1709524487296" duration="1222000" />
+      <workItem from="1709596534233" duration="1074000" />
+      <workItem from="1709601947833" duration="28000" />
+      <workItem from="1709602068777" duration="275000" />
     </task>
     <servers />
   </component>
