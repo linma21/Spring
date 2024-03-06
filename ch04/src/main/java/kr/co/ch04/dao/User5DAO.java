@@ -12,16 +12,36 @@ public class User5DAO {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     public void insertUser5(User5DTO user5DTO){
-
+        String sql = "INSERT INTO User5 (name,gender,age,addr) VALUES (?,?,?,?)";
+        Object[] params = {
+                user5DTO.getName(),
+                user5DTO.getGender(),
+                user5DTO.getAge(),
+                user5DTO.getAddr()
+        };
+        jdbcTemplate.update(sql, params);
     }
-    public User5DTO selectUser5(String uid){
-        return null;
+    public User5DTO selectUser5(String seq){
+        String sql = "SELECT * FROM User5 WHERE seq=?";
+        return jdbcTemplate.queryForObject(sql,new User5RowMapper(), seq);
     }
     public List<User5DTO> selectUser5s(){
-        return null;
+        String sql = "SELECT * FROM User5";
+        return jdbcTemplate.query(sql, new User5RowMapper());
     }
     public void updateUser5(User5DTO user5DTO){
-
+        String sql = "UPDATE User5 SET name=?, gender=?, age=?, addr=? WHERE seq=?";
+        Object[] params = {
+                user5DTO.getName(),
+                user5DTO.getGender(),
+                user5DTO.getAge(),
+                user5DTO.getAddr(),
+                user5DTO.getSeq()
+        };
+        jdbcTemplate.update(sql, params);
     }
-    public void deleteUser5(String uid){}
+    public void deleteUser5(String seq){
+        String sql = "DELETE FROM User5 WHERE seq=?";
+        jdbcTemplate.update(sql, seq);
+    }
 }
