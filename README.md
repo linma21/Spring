@@ -37,6 +37,14 @@
 | sub3. MyBatis 주요 컴포넌트
 
 ## **ch06. Spring Boot**  
+| sub1. Spring Boot 개요
+
+| sub2. Thymeleaf
+
+| sub3. Lombok
+
+| sub4. 테스트와 로깅
+
 ## **ch07. Spring Data JPA**  
 ## **ch08. Spring Security**  
 ## **ch09. Spring REST API**  
