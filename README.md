@@ -46,6 +46,14 @@
 | sub4. 테스트와 로깅
 
 ## **ch07. Spring Data JPA**  
+| sub1. JPA 개요
+
+| sub2. Spring Data JPA 개요
+
+| sub3. JPA Entity와 Entity Manager
+
+| sub4. JPA 연관관계
+
 ## **ch08. Spring Security**  
 ## **ch09. Spring REST API**  
 ## **ch10. JWT**  
