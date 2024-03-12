@@ -12,9 +12,11 @@ import lombok.*;
 @Entity
 @Table(name = "user5")
 public class User5 {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int seq;
+
     private String name;
     private String gender;
     private int age;

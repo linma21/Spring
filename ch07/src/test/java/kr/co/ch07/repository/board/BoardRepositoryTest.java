@@ -1,10 +1,10 @@
 package kr.co.ch07.repository.board;
 
 import jakarta.transaction.Transactional;
-import kr.co.ch07.entity.Article;
-import kr.co.ch07.entity.Comment;
-import kr.co.ch07.entity.File;
-import kr.co.ch07.entity.User;
+import kr.co.ch07.entity.board.Article;
+import kr.co.ch07.entity.board.Comment;
+import kr.co.ch07.entity.board.File;
+import kr.co.ch07.entity.board.User;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

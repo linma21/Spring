@@ -1,4 +1,4 @@
-package kr.co.ch07.entity;
+package kr.co.ch07.entity.board;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
