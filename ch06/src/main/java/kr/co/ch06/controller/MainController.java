@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +63,21 @@ public class MainController {
 
         return "/index";
     }
+    @GetMapping("/getParam")
+    public String getParam(String name, int age){
+        log.info("name : "+ name);
+        log.info("age : "+ age);
+
+        return "redirect:/index";
+    }
+    @PostMapping("/postParam")
+    public String postParam(User1DTO user1DTO){
+        log.info("uid : "+ user1DTO.getUid());
+        log.info("name : "+ user1DTO.getName());
+
+        return "redirect:/index";
+    }
+
     @GetMapping("/sub2/content1")
     public String content1(){
         return "/sub2/content1";
