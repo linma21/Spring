@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Use3r :: Login</title>
+</head>
+<body>
+    <h3>Use3r 로그인</h3>
+    <form th:action="@{/user3/login}" method="post">
+        <input type="text" name="uid"><br>
+        <input type="password" name="pass"><br>
+        <input type="submit" value="로그인">
+    </form>
+</body>
+</html>

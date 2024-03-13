@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <title>User2 :: success</title>
+</head>
+<body>
+    <h3>User2 로그인 성공 🎉🎉</h3>
+    <a th:href="@{/}">메인</a>
+    <h4>[로그인 유저 정보]</h4>
+    <p th:if="${session.sessUser != null}">
+        아이디 : <span>[[${session.sessUser.uid}]]</span><br>
+        이름 : <span>[[${session.sessUser.name}]]</span><br>
+        나이 : <span>[[${session.sessUser.age}]]</span><br>
+        휴대폰 : <span>[[${session.sessUser.hp}]]</span><br>
+        가입일 : <span>[[${session.sessUser.regDate}]]</span><br>
+        <a th:href="@{/user2/logout}">로그아웃</a>
+    </p>
+    <a th:href="@{/user2/result}">쿠키확인</a>
+</body>
+</html>

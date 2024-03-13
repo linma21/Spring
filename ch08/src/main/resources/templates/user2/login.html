@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User2 :: Login</title>
+</head>
+<body>
+    <h3>User2 로그인</h3>
+    <!-- session 방식 인증 -->
+    <form th:action="@{/user2/login}" method="post">
+        <input type="text" name="uid"><br>
+        <input type="password" name="pass"><br>
+        <input type="submit" value="로그인">
+    </form>
+</body>
+</html>

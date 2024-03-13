@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <title>User :: success</title>
+</head>
+<body>
+    <h3>User 로그인 성공 🎉🎉</h3>
+    <p>
+        <a th:href="@{/admin/index}">🐋최고관리자 페이지</a>
+        <a th:href="@{/manager/index}">🐠운영자 페이지</a>
+    </p>
+    <!--
+        의존성 추가
+            - xml namespace 선언해서 security 속성 사용
+            - thymeleaf-extras-springsecurity6
+    -->
+    <h4>[로그인 유저 정보]</h4>
+    <p sec:authorize="isAuthenticated()">
+        아이디　: <span>[[${#authentication.principal.user.uid}]]</span><br>
+        이름　　: <span>[[${#authentication.principal.user.name}]]</span><br>
+        나이　　: <span sec:authentication="principal.user.age"></span><br>
+        휴대폰　: <span sec:authentication="principal.user.hp"></span><br>
+        가입일　: <span sec:authentication="principal.user.regDate"></span><br>
+        <a th:href="@{/user1/logout}">🐾로그아웃</a>
+    </p>
+</body>
+</html>

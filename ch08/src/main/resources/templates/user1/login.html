@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User :: Login</title>
+</head>
+<body>
+    <h3>User 로그인</h3>
+    <form method="post">
+        <input type="text" name="uid"><br>
+        <input type="password" name="pass"><br>
+        <input type="submit" value="로그인">
+    </form>
+    <a th:href="@{/user1/register}">회원가입😃</a>
+</body>
+</html>
