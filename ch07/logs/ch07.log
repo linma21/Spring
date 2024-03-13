@@ -335,3 +335,6 @@
 2024-03-13T08:49:42.309+09:00  INFO 3396 --- [ch07] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/ch07'
 2024-03-13T08:49:42.311+09:00  INFO 3396 --- [ch07] [restartedMain] kr.co.ch07.Ch07Application               : Started Ch07Application in 0.583 seconds (process running for 336.053)
 2024-03-13T08:49:42.312+09:00  INFO 3396 --- [ch07] [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2024-03-13T09:28:06.441+09:00  INFO 3396 --- [ch07] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-03-13T09:28:06.442+09:00  INFO 3396 --- [ch07] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown initiated...
+2024-03-13T09:28:06.445+09:00  INFO 3396 --- [ch07] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown completed.
