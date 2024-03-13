@@ -55,6 +55,14 @@
 | sub4. JPA 연관관계
 
 ## **ch08. Spring Security**  
+| sub1. 인증과 인가
+
+| sub2. Spring Security 개요
+
+| sub3. Spring SecurityFilterChain
+
+| sub4. Spring Security 인증 처리 과정
+
 ## **ch09. Spring REST API**  
 ## **ch10. JWT**  
 ## **ch11. OAuth2**  
