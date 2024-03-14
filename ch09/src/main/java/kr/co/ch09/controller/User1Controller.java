@@ -54,21 +54,22 @@ public class User1Controller {
     }
     @ResponseBody
     @PostMapping("/user1")
-    public ResponseEntity<User1DTO> register(@RequestBody User1DTO user1DTO){ //@RequestBody 생략가능
+    public ResponseEntity<User1DTO> register(@RequestBody User1DTO user1DTO){
         service.insertUser1(user1DTO);
         return ResponseEntity.ok().body(user1DTO);
 
     }
     @ResponseBody
     @PutMapping("/user1")
-    public ResponseEntity<User1DTO> modify(User1DTO user1DTO){
+    public ResponseEntity<User1DTO> modify(@RequestBody User1DTO user1DTO){
+        log.info(user1DTO.toString());
         User1DTO user1 = service.updateUser1(user1DTO);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(user1);
 
     }
     @ResponseBody
     @DeleteMapping("/user1/{uid}")
-    public void delete(@PathVariable("uid") String uid){
-        service.deleteUser1(uid);
+    public ResponseEntity<?> delete(@PathVariable("uid") String uid){
+        return service.deleteUser1(uid);
     }
 }

@@ -1,26 +1,46 @@
 package kr.co.ch09.controller;
 
+import kr.co.ch09.dto.User2DTO;
+import kr.co.ch09.service.User2Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@RestController // return되는 값을 다로 응답 데이터로 보냄
+@RestController // return되는 값을 바로 응답 데이터로 보냄
 public class User2Controller {
 
+    private final User2Service user2Service;
+
     @GetMapping("/user2")
-    public void list(){}
+    public ResponseEntity<List<User2DTO>> list(){
+        return user2Service.selectUser2s();
+    }
 
     @GetMapping("/user2/{uid}")
-    public void user2(){}
+    public ResponseEntity<?> user2(@PathVariable("uid") String uid){
+        return user2Service.selectUser2(uid);
+    }
 
-    @PostMapping("/user2")
-    public void register(){}
+    @PostMapping("/user2") // @Validated : 유효성 검사
+    public ResponseEntity<?> register(@RequestBody @Validated User2DTO user2DTO){
+        log.info(user2DTO.toString());
+        user2Service.insertUser2(user2DTO);
+        return ResponseEntity.ok().body(user2DTO);
+    }
 
     @PutMapping("/user2")
-    public void modify(){}
+    public ResponseEntity<?> modify(@RequestBody User2DTO user2DTO){
+        return user2Service.updateUser2(user2DTO);
+    }
 
     @DeleteMapping("/user2/{uid}")
-    public void delete(){}
+    public ResponseEntity<?> delete(@PathVariable("uid") String uid){
+        return user2Service.deleteUser2(uid);
+    }
 }

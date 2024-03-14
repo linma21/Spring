@@ -5,6 +5,8 @@ import kr.co.ch09.entity.User1;
 import kr.co.ch09.repository.User1Repository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,8 +48,24 @@ public class User1Service {
         Optional<User1> result = repository.findById(user1DTO.getUid());
         return result.get().toDTO();
     }
-    public void deleteUser1(String uid){
-        repository.deleteById(uid);
+    public ResponseEntity deleteUser1(String uid){
+
+        // 삭제 전 삭제할 사용자 조회
+        Optional<User1> optUser1 = repository.findById(uid);
+
+        if(optUser1.isPresent()){
+            // 사용자가 존재하면 삭제 후 삭제한 사용자 정보 ResponseEntity로 반환
+            repository.deleteById(uid);
+            return ResponseEntity.ok()
+                    .body(optUser1.get());
+        }else {
+            // 사용자가 존재하지않으면 NOT_FOUND 응답데이터와 user not found 메세지 반환
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("user not found");
+        }
+
+
+
 
         /*
         Optional<User1> result = repository.findById(uid);
