@@ -20,7 +20,6 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public void insertUser(UserDTO userDTO){
-
         // 비밀 번호 암호화
         String encoded = passwordEncoder.encode(userDTO.getPass());
         userDTO.setPass(encoded);
@@ -32,7 +31,7 @@ public class UserService {
 
         Optional<User> result = userRepository.findById(userDTO.getUid());
 
-        if(!result.isEmpty()){
+        if(result.isPresent()){
             User user = result.get();
 
             // 비밀번호 검증
