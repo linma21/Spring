@@ -1,11 +1,69 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>user5::list</title>
+    <script>
+        window.onload = function (){
+            const table = document.getElementsByTagName('table')[0];
+
+            fetch('/ch09/user5')
+                .then(response => response.json())
+                .then(data => {
+                    for(const user of data){
+                        const tr = `<tr>
+                                        <td>${user.seq}</td>
+                                        <td>${user.name}</td>
+                                        <td>${user.gender}</td>
+                                        <td>${user.age}</td>
+                                        <td>${user.addr}</td>
+                                        <td>
+                                            <a href="#" class="modify" data-seq="${user.seq}">수정</a>
+                                            <a href="#" class="delete" data-seq="${user.seq}">삭제</a>
+                                        </td>
+                                    </tr>`;
+
+                        table.insertAdjacentHTML('beforeend', tr);
+
+                    }
+                })
+                .catch(err =>{
+                    console.log(err);
+                });
+            document.addEventListener('click', function (e){
+               if(e.target.classList == 'modify'){
+                   const seq = e.target.dataset.seq;
+                   console.log(seq);
+                   location.href=`/ch09/user5/modify?seq=${seq}`;
+
+               }else if(e.target.classList == 'delete'){
+                   const seq = e.target.dataset.seq;
+                   const tr = e.target.closest('tr');
+
+                    fetch(`/ch09/user5/${seq}`,{
+                        method : 'DELETE'
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if(data != null){
+                                alert(data.name + '님 삭제했습니다.');
+                                tr.remove();
+                            }
+                        })
+                        .catch(err =>{
+                            console.log(err);
+                        });
+               }
+
+
+            });
+
+        }
+
+    </script>
 </head>
 <body>
 <h3>user5 목록</h3>
-<a href="/ch07">메인</a>
-<a href="/ch07/user5/register">등록</a>
+<a th:href="@{/}">메인</a>
+<a th:href="@{/user5/register}">등록</a>
 <table border="1">
     <tr>
         <th>아이디</th>
@@ -15,17 +73,6 @@
         <th>주소</th>
         <th>관리</th>
     </tr>
-        <tr th:each="user:${users}">
-            <td th:text="${user.seq}">"</td>
-            <td th:text="${user.name}">"</td>
-            <td th:text="${user.gender}">"</td>
-            <td th:text="${user.age}">"</td>
-            <td th:text="${user.addr}">"</td>
-            <td>
-                <a th:href="@{/user5/modify(seq=${user.seq})}">수정</a>
-                <a th:href="@{/user5/delete(seq=${user.seq})}">삭제</a>
-            </td>
-        </tr>
 </table>
 </body>
 </html>

@@ -67,5 +67,17 @@ public class MainController {
         return "/user4/modify";
     }
     // User5
+    @GetMapping("/user5/list")
+    public String user5List(){
+        return "/user5/list";
+    }
+    @GetMapping("/user5/register")
+    public String user5Register(){
+        return "/user5/register";
+    }
+    @GetMapping("/user5/modify")
+    public String user5Modify(){
+        return "/user5/modify";
+    }
 
 }

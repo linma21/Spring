@@ -1,12 +1,46 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>user5::register</title>
+    <script>
+        window.onload = function (){
+            const form = document.formUser5;
+
+            form.onsubmit = function (e){
+                e.preventDefault();
+
+                const jsonData = {
+                    "seq" : form.seq.value,
+                    "name" : form.name.value,
+                    "gender" : form.gender.value,
+                    "age" : form.age.value,
+                    "addr" : form.addr.value
+                }
+                fetch('/ch09/user5', {
+                    method : 'POST',
+                    headers : {'Content-Type' : 'application/json'},
+                    body : JSON.stringify(jsonData)
+                })
+                    .then(response => response.json())
+                    .then(data=>{
+                        if(data != null){
+                            alert(data.name +'님 등록완료되었습니다.');
+                            location.href='/ch09/user5/list';
+                        }
+                    })
+                    .catch(err =>{
+                        console.log(err);
+                    });
+            }
+
+        }
+
+    </script>
 </head>
 <body>
 <h3>user5 등록</h3>
-<a href="/ch07">메인</a>
-<a href="/ch07/user5/list">목록</a>
-<form action="/ch07/user5/register" method="post">
+<a th:href="@{/}">메인</a>
+<a th:href="@{/user5/register}">등록</a>
+<form name="formUser5" method="post">
     <input type="hidden" name="seq" value="0">
     <table border="1">
         <tr>

@@ -1,24 +1,78 @@
 <html xmlns:th="http://www.thymeleaf.org">
     <title>user5::modify</title>
+    <script>
+        window.onload = function (){
+            const form = document.formUser5;
+
+            const url = location.href;
+            const params = url.split('?')[1];
+            const seqParam = params.split('=')[1];
+            const seq = parseInt(seqParam);
+
+            fetch(`/ch09/user5/${seq}`)
+                .then(response => response.json())
+                .then(data =>{
+                    console.log(data);
+                    form.seq.value = data.seq;
+                    form.name.value = data.name;
+                    form.gender.value = data.gender;
+                    form.age.value = data.age;
+                    form.addr.value = data.addr;
+                })
+                .catch(err =>{
+                    console.log(err);
+                });
+
+            form .onsubmit = function (e){
+                e.preventDefault();
+
+                const jsonData = {
+                    "seq" : form.seq.value,
+                    "name" : form.name.value,
+                    "gender" : form.gender.value,
+                    "age" : form.age.value,
+                    "addr" : form.addr.value
+                }
+
+                fetch('/ch09/user5', {
+                    method : 'PUT',
+                    headers : {'Content-Type' : 'application/json'},
+                    body : JSON.stringify(jsonData)
+                })
+                    .then(response => response.json())
+                    .then(data=>{
+                        if(data != null){
+                            alert(data.name +'님 수정 완료되었습니다.');
+                            location.href='/ch09/user5/list';
+                        }
+                    })
+                    .catch(err =>{
+                        console.log(err);
+                    });
+            }
+
+        }
+
+    </script>
 </head>
 <body>
 <h3>user5 수정</h3>
-<a href="/ch07">메인</a>
-<a href="/ch07/user5/list">목록</a>
-<form action="/ch07/user5/modify" method="post">
+<a th:href="@{/}">메인</a>
+<a th:href="@{/user5/register}">등록</a>
+<form name="formUser5" method="post">
     <table border="1">
         <tr>
             <td>아이디</td>
-            <td><input type="text" name="seq" readonly th:value="${user5DTO.seq}"></td>
+            <td><input type="text" name="seq" readonly></td>
         </tr>
         <tr>
             <td>이름</td>
-            <td><input type="text" name="name" th:value="${user5DTO.name}"></td>
+            <td><input type="text" name="name"></td>
         </tr>
         <tr>
             <td>성별</td>
             <td>
-                <select name="gender" th:value="${user5DTO.gender}">
+                <select name="gender">
                     <option value="M">남성</option>
                     <option value="F">여성</option>
                 </select>
@@ -26,11 +80,11 @@
         </tr>
         <tr>
             <td>나이</td>
-            <td><input type="number" name="age" th:value="${user5DTO.age}"></td>
+            <td><input type="number" name="age"></td>
         </tr>
         <tr>
             <td>주소</td>
-            <td><input type="text" name="addr" th:value="${user5DTO.addr}"></td>
+            <td><input type="text" name="addr"></td>
         </tr>
         <tr>
             <td colspan="2" align="right"><input type="submit" value="수정하기"></td>
