@@ -21,6 +21,7 @@
                 location.href = '/ch10/';
             }
 
+            // 목록
             const accessToken = localStorage.getItem("accessToken");
             fetch('/ch10/user', {
                 headers : {'Authorization' : `Bearer ${accessToken}`}
@@ -45,7 +46,35 @@
                         table.insertAdjacentHTML('beforeend', tr);
 
                     }
+                })
+                .catch(err => {
+                  console.log(err);
                 });
+            document.addEventListener('click', function (e){
+               if(e.target.classList == 'modify'){
+                   const uid = e.target.dataset.uid;
+                   location.href = `/ch10/user/modify?uid=${uid}`;
+               }else if(e.target.classList == 'delete'){
+                   const uid = e.target.dataset.uid;
+                   const tr = e.target.closest('tr');
+
+                   fetch(`/ch10/user/${uid}`, {
+                       method : 'DELETE'
+                   })
+                       .then(response => response.json())
+                       .then(data => {
+                           if(data != null){
+                               alert(data.uid +'님 삭제했습니다.');
+                               tr.remove();
+                           }
+                       })
+                       .catch(err => {
+                           console.log(err);
+                       });
+               }
+
+
+            });
         }
     </script>
 </head>

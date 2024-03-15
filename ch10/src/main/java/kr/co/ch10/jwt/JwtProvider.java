@@ -58,7 +58,7 @@ public class JwtProvider {
         return token;
     }
     public Claims getClaims(String token){
-        log.info("Jwt Provider...4");
+        log.info("Jwt Provider...5 read Claims");
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()
@@ -66,7 +66,7 @@ public class JwtProvider {
                 .getBody();
     }
     public Authentication getAuthentication(String token){
-        log.info("Jwt Provider...5");
+        log.info("Jwt Provider...4 get role");
         // 클레임에서 사용자, 권한 가져오기
         Claims claims = getClaims(token);
         String uid = (String) claims.get("username");
@@ -91,7 +91,7 @@ public class JwtProvider {
                     .setSigningKey(secretKey)
                     .build()
                     .parseClaimsJws(token);
-            log.info("Jwt Provider...7");
+            log.info("Jwt Provider...validate Token....");
             return true;
         }catch (SecurityException | MalformedJwtException e){
             // 잘못된 JWT 서명일 경우

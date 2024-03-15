@@ -25,4 +25,13 @@ public class MainController {
     public String list(){
         return "/user/list";
     }
+    @GetMapping("/user/register")
+    public String register(){
+        return "/user/register";
+    }
+    //@PreAuthorize("hasAuthority('MANAGER') or hasAuthority('ADMIN')")
+    @GetMapping("/user/modify")
+    public String modify(){
+        return "/user/modify";
+    }
 }

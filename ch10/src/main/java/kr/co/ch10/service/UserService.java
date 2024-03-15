@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,17 +20,16 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public ResponseEntity<?> insertUser(UserDTO userDTO){
-        /*
-            JPA save()는 삽입, 수정을 동시에 할 수 있는 메서드 이기 때문에
-            삽입을 수행하고자 할 경우에는 먼저 미리 existsById()로 존재여부를 확인하고
-            save()를 수행하면 됨
-        */
+
         if(userRepository.existsById(userDTO.getUid())){
             // 이미 존재하는 아이디이면
             return ResponseEntity.status(HttpStatus.CONFLICT).body(userDTO.getUid()+ " already exist");
         }else {
+            String encoded = passwordEncoder.encode(userDTO.getPass());
+            userDTO.setPass(encoded);
             User user = userDTO.toEntity();
             userRepository.save(user);
             return  ResponseEntity.ok().body(user);

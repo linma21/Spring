@@ -38,22 +38,22 @@ public class UserController {
 
             // 사용자 DB 조회
             Authentication authentication = authenticationManager.authenticate(authToken);
-            log.info("login...try");
+            log.info("login...try1");
             // 인증된 사용자 가져오기
             MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
             User user = userDetails.getUser();
-
+            log.info("login...try2");
             // 토큰 발급(액세스, 리프레시)
             String access = jwtProvider.createToken(user, 1); // 1일
             String refresh = jwtProvider.createToken(user, 7); // 7일
 
             // 리프레시 토큰 DB 저장
-
+            log.info("login...try3 create Token finish...");
             // 엑세스 토큰 클라이언트 전송
             Map<String, Object> map = new HashMap<>();
             map.put("grantType", "Bearer");
             map.put("access", access);
-
+            log.info("login...try4 sendToken to client");
             return ResponseEntity.ok().body(map);
         }catch (Exception e){
             log.info("login... catch"+e.getMessage());
@@ -64,6 +64,23 @@ public class UserController {
     @GetMapping("/user")
     public ResponseEntity<List<UserDTO>> list(){
         return service.selectUsers();
+    }
+
+    @GetMapping("/user/{uid}")
+    public ResponseEntity<?> user(@PathVariable("uid") String uid){
+        return service.selectUser(uid);
+    }
+    @PostMapping("/user")
+    public ResponseEntity<?> register(@RequestBody UserDTO userDTO){
+        return service.insertUser(userDTO);
+    }
+    @PutMapping("/user")
+    public ResponseEntity<?> modify(@RequestBody UserDTO userDTO){
+        return service.updateUser(userDTO);
+    }
+    @PutMapping("/user/{uid}")
+    public ResponseEntity<?> delete(@PathVariable("uid") String uid){
+        return service.deleteUser(uid);
     }
 
 }
