@@ -1,0 +1,86 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="/layout/defaultLayout.html">
+<div class="container-fluid px-4" layout:fragment="content">
+    <h1 class="mt-4">게시판 목록</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">000 게시판 글목록</li>
+    </ol>
+    <!-- 내용 시작 -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            DataTable Example
+        </div>
+        <div class="card-body">
+            <table id="datatablesSimple">
+                <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>조회수</th>
+                    <th>등록일</th>
+                </tr>
+                </thead>
+                <tfoot>
+                <tr>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Office</th>
+                    <th>Age</th>
+                    <th>Start date</th>
+                </tr>
+                </tfoot>
+                <tbody>
+                    <tr th:each="article:${articles}">
+                        <td th:text="${article.no}"></td>
+                        <td th:text="${article.title}"></td>
+                        <td th:text="${article.user.getNick()}"></td>
+                        <td th:text="${article.hit}"></td>
+                        <td th:text="${#temporals.format(article.RDate,'yyyy-MM-dd')}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <nav aria-label="Page navigation example" class="text-center">
+            <ul class="pagination justify-content-center">
+                <!-- 첫 페이지 -->
+                <li class="page-item">
+                    <a class="page-link" th:href="@{/article/list(page=1)}" aria-label="firstPage">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <!-- 이전 페이지 -->
+                <li class="page-item"><a class="page-link" th:href="${articles.first} ? '#' : @{/article/list(page=${articles.number})}"> < </a></li>
+                <span th:each="page: ${pageNumbers}">
+            <!-- 현재 페이지는 링크 없이 숫자만 -->
+            <li class="page-item sharp" th:if="${page == articles.number + 1}" >
+                <a class="page-link" href="#">
+                    <span th:text="${page}"></span>
+                </a>
+            </li>
+                    <!-- 현재 페이지가 아닌 경우 링크를 포함하여 표시 -->
+            <li class="page-item sharp" th:unless="${page == articles.number + 1}">
+                <a class="page-link" th:href="@{'/article/list?page=' + ${page}}">
+                    <span th:text="${page}"></span>
+                </a>
+            </li>
+        </span>
+                <li class="page-item"><a class="page-link" th:href="${articles.last} ? '#' : @{/article/list(page=${articles.number + 2})}"> > </a></li>
+                <!-- 마지막 페이지 -->
+                <li class="page-item">
+                    <a class="page-link" th:href="@{/article/list(page=${articles.totalPages})}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+    <div class="text-end">
+        <a th:href="@{/article/write(cate=${cate})}" class="btn btn-primary">글쓰기</a>
+    </div>
+    <!-- 내용 끝 -->
+</div>
+</html>
