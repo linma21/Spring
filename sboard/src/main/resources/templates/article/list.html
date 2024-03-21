@@ -51,11 +51,9 @@
                     <a class="page-link" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=${pageResponseDTO.start - 1})}">&#60;</a>
                 </li>
                 <!-- 페이지 넘버 반복 -->
-                <span th:each="num:${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
-                    <li class="page-item">
+                    <li class="page-item" th:each="num:${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
                         <a class="page-link" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=${num})}">[[${num}]]</a>
                     </li>
-                </span>
                 <!-- 다음 페이지 -->
                 <li th:if="${pageResponseDTO.next}" class="page-item">
                     <a class="page-link" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=${pageResponseDTO.end + 1})}">&#62;</a>

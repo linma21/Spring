@@ -272,12 +272,15 @@
                     } else if (e.target.type == 'submit') {
                         commentForm.submit();
 
+                    } else if (e.target.dataset.mode == 'goToIndex') {
+                        location.href = "/sboard/index";
+
                     }
                 }
             });
         }
     </script>
-    <h1 class="mt-4">게시판 글보기</h1>
+    <h1 class="mt-4">게시판</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item active">000 글보기</li>
     </ol>
