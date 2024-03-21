@@ -24,7 +24,7 @@
             000 글쓰기 ✏
         </div>
         <div class="card-body">
-            <form th:action="@{/article/write}" id="formWrite" method="post">
+            <form th:action="@{/article/write}" id="formWrite" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="writer" th:value="${#authentication.principal.user.uid}">
                 <input type="hidden" name="cate" th:value="${cate}">
                 <input type="hidden" name="no" value="0">
@@ -37,7 +37,7 @@
                     <textarea class="form-control" id="exampleFormControlTextarea1" rows="10" name="content" placeholder="내용 입력"></textarea>
                 </div>
                 <div class="mb-3">
-                    <label for="formFileMultiple" class="form-label"></label>
+                    <label for="formFileMultiple" class="form-label">파일첨부</label>
                     <input class="form-control" type="file" name="files" id="formFileMultiple" multiple>
                 </div>
             </form>

@@ -1,0 +1,199 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="/layout/defaultLayout.html">
+<div class="container-fluid px-4" layout:fragment="content">
+    <script>
+        window.onload = function (){
+            const commentForm = document.getElementById('commentForm');
+            const btnComment = document.getElementsByClassName('btnComment')[0];
+            const fileLinks = document.getElementsByClassName('fileLink');
+            const commentContainer = document.getElementById('commentContainer');
+            for(const fileLink of fileLinks){
+                // 파일 다운로드 요청과 동시에 다운로드 카운트 요청
+                fileLink.onclick = async function (){
+                    const fno = this.dataset.fno;
+
+                    const count = this.nextElementSibling.innerText;
+                    this.nextElementSibling.innerHTML = parseInt(count) + 1;
+                }
+            }
+            ////////댓글 불러오기 /////////////
+            setTimeout(async function (){
+
+                const comments = await fetchGet(`/sboard/comment/${no}`);
+                console.log('comments : ' + comments);
+                for(const comment of comments){
+                    commentPlaceholder.remove();
+
+                    const commentArticle = `<div class="mb-3">
+                                                <ol class="breadcrumb mb-1">
+                                                    <li class="breadcrumb-item">${comment.writer}</li>
+                                                    <li class="breadcrumb-item">${comment.rdate.substring(0, 10)}</li>
+                                                </ol>
+
+                                                <textarea class="form-control" rows="3" readonly>${comment.content}</textarea>
+                                                <div class="text-end mt-1">
+                                                    <button type="button" class="btn btn-warning btn-sm">수정</button>
+                                                    <button type="button" class="btn btn-danger btn-sm">삭제</button>
+                                                </div>
+                                            </div>`;
+
+                    // 태그 문자열 삽입
+                    commentList.insertAdjacentHTML('beforeend', commentArticle);
+
+                }
+            }, 2000);
+
+            btnComment.addEventListener('click',
+                async function (e) {
+                    const page = commentForm.querySelector('input[name="page"]').value;
+                    const parent = commentForm.querySelector('input[name="parent"]').value;
+                    const url = `/sboard/commentWrite?page=${page}`;
+                    e.preventDefault();
+                    const jsonData = {
+                        "writer": commentForm.querySelector('input[name="writer"]').value,
+                        "cate": commentForm.querySelector('input[name="cate"]').value,
+                        "parent": parent,
+                        "content": commentForm.content.value
+                    };
+
+                    const data = await fetchPost(url, jsonData);
+                    console.log(data)
+                    // 댓글 목록 동적 처리
+                    const commentHtml = `
+                                        <div class="card-body">
+                                            <div class="d-flex flex-start">
+                                                <i class="fas fa-user mt-1 me-2"></i>
+                                                <div class="w-100">
+                                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                                        <h6 class="text-primary fw-bold mb-0">
+                                                            ${data.user.nick}
+                                                            <span class="text-dark ms-2"></span>
+                                                        </h6>
+                                                        <div class="ml-auto">
+                                                            <p class="mb-0">${data.rdate.substring(0, 10)}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                                        <div class="mb-0" readonly>
+                                                            ${data.content}
+                                                        </div>
+                                                    </div>
+                                                    <!-- 댓글 작성자와 현재 사용자가 동일한 경우에만 삭제 및 수정 버튼을 표시 -->
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <p class="small mb-0" style="color: #aaa;">
+                                                            <a href="#!" class="link-grey">삭제</a> •
+                                                            <a href="#!" class="link-grey">수정</a>
+                                                        </p>
+                                                        <div class="d-flex flex-row">
+                                                            <i class="fas fa-star text-warning me-2"></i>
+                                                            <i class="far fa-check-circle" style="color: #aaa;"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                    console.log(commentHtml);
+                    // 마지막 댓글 요소를 선택합니다.
+                    const lastComment = commentContainer.lastElementChild;
+
+                    lastComment.insertAdjacentHTML('afterend', commentHtml);
+                });
+        }
+    </script>
+    <h1 class="mt-4">게시판 글보기</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">000 글보기</li>
+    </ol>
+    <!-- 내용 시작 -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            <label th:text="${article.title}" ></label>
+        </div>
+        <div class="card-body">
+            <form action="#">
+                <input type="hidden" name="cate" th:value="${pageResponseDTO.cate}">
+                <input type="hidden" name="pg" th:value="${pageResponseDTO.pg}">
+                <input type="hidden" name="no" value="0">
+                <!--
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">글제목</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" name="title" th:value="${article.title}" readonly>
+                </div> -->
+                <div class="mb-3">
+                    <label for="exampleFormControlTextarea1" class="form-label fw-bolder">글내용</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="10" name="content" readonly>[[${article.content}]]</textarea>
+                </div>
+                <div th:if="${article.file > 0}" class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">첨부파일</label>
+                    <ul class="list-group">
+
+                        <li th:each="file:${article.fileList}" class="list-group-item d-flex justify-content-between align-items-center">
+                            <a th:href="@{/file/download/{fno}(fno=${file.fno})}" class="fileLink" th:data-fno="${file.fno}">[[${file.oName}]]</a>
+                            <span class="badge text-bg-primary rounded-pill">[[${file.download}]]</span>
+                        </li>
+
+                    </ul>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="text-end">
+        <a th:href="@{'/article/list?pg=' + ${pageResponseDTO.pg} + '&cate=' + ${pageResponseDTO.cate}}" class="btn btn-secondary">목록</a>
+    </div>
+    <!-- 댓글 목록 -->
+    <div class="card mt-3" id="commentContainer" th:each="comment :${pageResponseDTO.dtoList}">
+        <div class="card-body">
+            <div class="d-flex flex-start">
+                <i class="fas fa-user mt-1 me-2"></i>
+                <div class="w-100">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="text-primary fw-bold mb-0">
+                            [[${comment.user.nick}]]
+                            <span class="text-dark ms-2"></span>
+                        </h6>
+                        <div class="ml-auto">
+                            <p class="mb-0" th:text="${#temporals.format(comment.RDate,'yyyy-MM-dd')}"></p>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="mb-0" readonly>
+                            [[${comment.content}]]
+                        </div>
+                    </div>
+                    <!-- 댓글 작성자와 현재 사용자가 동일한 경우에만 삭제 및 수정 버튼을 표시 -->
+                    <div class="d-flex justify-content-between align-items-center" th:if="${comment.user.uid == #authentication.principal.user.uid}">
+                        <p class="small mb-0" style="color: #aaa;">
+                                <a href="#!" class="link-grey">삭제</a> •
+                                <a href="#!" class="link-grey">수정</a>
+                        </p>
+                        <div class="d-flex flex-row">
+                            <i class="fas fa-star text-warning me-2"></i>
+                            <i class="far fa-check-circle" style="color: #aaa;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 댓글 쓰기 -->
+    <form th:action="@{/commentWrite}" method="post" id="commentForm" class="mt-3">
+        <input type="hidden" name="parent" th:value="${article.no}">
+        <input type="hidden" name="writer" th:value="${#authentication.principal.user.uid}">
+        <input type="hidden" name="cate" th:value="${pageResponseDTO.cate}">
+        <input type="hidden" name="page" th:value="${pageResponseDTO.cate}">
+        <input type="hidden" name="no" value="0">
+        <div class="input-group">
+            <span class="input-group-text">댓글 입력</span>
+            <textarea class="form-control" aria-label="With textarea" rows="5" name="content"></textarea>
+        </div>
+        <div class="mt-4 mb-4 text-end">
+            <button type="button" class="btn btn-secondary">취소</button>
+            <input type="submit" class="btn btnComment btn-primary" value="댓글 등록">
+        </div>
+    </form>
+    <!-- 내용 끝 -->
+</div>
+</html>

@@ -1,20 +1,23 @@
 package kr.co.sboard.service;
 
 import kr.co.sboard.dto.ArticleDTO;
+import kr.co.sboard.dto.FileDTO;
+import kr.co.sboard.dto.PageRequestDTO;
+import kr.co.sboard.dto.PageResponseDTO;
 import kr.co.sboard.entity.Article;
+import kr.co.sboard.entity.File;
 import kr.co.sboard.repository.ArticleRepository;
+import kr.co.sboard.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -22,21 +25,55 @@ import java.util.List;
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
+    private final FileService fileService;
+    private final FileRepository fileRepository;
+
     // RootConfig Bean 생성/등록
     private final ModelMapper modelMapper;
 
     public void insertArticle(ArticleDTO articleDTO){
-        log.info("insertArticle articleDTO : " +articleDTO.toString());
-        // articleDTO를 articleEntity로 변환
-        // 정확하게 일치하는 필드만 매핑
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+        List<FileDTO> files = fileService.fileUpload(articleDTO);
+
+        // 파일 개수
+        articleDTO.setFile(files.size());
+
         Article article = modelMapper.map(articleDTO, Article.class);
-        log.info("insertArticle : " + article.toString());
-        articleRepository.save(article);
+
+        // 저장 후 저장한 엔티티 객체 반환(JPA sava() 메서드는 default로 저장한 Entity를 반환)
+        Article saveArticle = articleRepository.save(article);
+        log.info("insertArticle : " + saveArticle.toString());
+
+        // 파일 insert
+        for(FileDTO fileDTO : files){
+            fileDTO.setAno(saveArticle.getNo());
+            File file = modelMapper.map(fileDTO, File.class);
+
+            fileRepository.save(file);
+        }
+
     }
-    public ArticleDTO selectArticle(){
-        return null;
+
+
+    @Transactional
+    public ArticleDTO selectArticle(int no){
+        Optional<Article> optArticle = articleRepository.findById(no);
+        log.info("selectArticle ... 1 : " + optArticle.toString());
+
+        ArticleDTO articleDTO = null;
+
+        if(optArticle.isPresent()){
+            Article article = optArticle.get();
+            log.info("selectArticle ... 2 : " + article.toString());
+            articleDTO = modelMapper.map(article, ArticleDTO.class);
+            log.info("selectArticle ... 3 articleDTO1 : " + articleDTO.toString());
+            // hit ++
+            articleRepository.incrementHitByNo(no);
+        }
+        log.info("selectArticle ... 4 articleDTO2 : " + articleDTO.toString());
+        return articleDTO;
     }
+
     /*
     public List<ArticleDTO> selectArticles(){
         List<Article> articles = articleRepository.findAll();
@@ -44,14 +81,22 @@ public class ArticleService {
         return  modelMapper.map(articles, new TypeToken<List<ArticleDTO>>() {}.getType());
     }
     */
-    public Page<ArticleDTO> paging(Pageable pageable){
-        int page = pageable.getPageNumber() - 1;
-        int pageLimit = 10;
+    public PageResponseDTO findByParentAndCate(PageRequestDTO pageRequestDTO){
 
-        Page<Article> articles = articleRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "no")));
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        Page<ArticleDTO> articleDTOs = modelMapper.map(articles, new TypeToken<Page<ArticleDTO>>() {}.getType());
+        Pageable pageable = pageRequestDTO.getPageable("no");
+        String cate = pageRequestDTO.getCate();
+        Page<Article> pageArticles = articleRepository.findByParentAndCate(0, pageRequestDTO.getCate(), pageable);
 
-        return articleDTOs;
+        List<ArticleDTO> dtoList = pageArticles.getContent().stream()
+                .map(entity -> modelMapper.map(entity, ArticleDTO.class))
+                .toList();
+
+        int total = (int) pageArticles.getTotalElements();
+
+        return PageResponseDTO.builder()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(dtoList)
+                .total(total)
+                .build();
     }
 }

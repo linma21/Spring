@@ -32,7 +32,7 @@ public class User {
     private String sms;
 
     @CreationTimestamp
-    private LocalDateTime rDate;
+    private LocalDateTime regDate;
 
     private LocalDateTime leaveDate;
 

@@ -54,7 +54,7 @@
                         return;
                     }
                     // 중복 체크
-                    const data = await fetchData(`/sboard/user/${type}/${value}`);
+                    const data = await fetchGet(`/sboard/user/${type}/${value}`);
 
                     if (data.result > 0) {
                         spinner.classList.add('d-none');
@@ -132,7 +132,7 @@
                         return;
                     }
                     // 중복 체크
-                    const data = await fetchData(`/sboard/user/${type}/${value}`);
+                    const data = await fetchGet(`/sboard/user/${type}/${value}`);
 
                     if (data.result > 0) {
                         spinner.classList.add('d-none');
@@ -174,7 +174,7 @@
                         return;
                     }
                     // 중복 체크
-                    const data = await fetchData(`/sboard/user/${type}/${value}`);
+                    const data = await fetchGet(`/sboard/user/${type}/${value}`);
 
                     if (data.result > 0) {
                         spinner.classList.add('d-none');
@@ -218,7 +218,7 @@
                         return;
                     }
                     // 중복 체크
-                    const data = await fetchData(`/sboard/user/${type}/${value}`);
+                    const data = await fetchGet(`/sboard/user/${type}/${value}`);
                     if (data.result > 0) {
                         spinner.classList.add('d-none');
                         inputValue.classList.add('is-invalid');
@@ -249,7 +249,7 @@
 
             // 인증코드 확인
             btnCheckEmailCode.onclick = async function (){
-                const data = await fetchData(`/sboard/email/${inputEmailCode.value}`);
+                const data = await fetchGet(`/sboard/email/${inputEmailCode.value}`);
                 if(!data.result){
                     inputEmailCode.classList.add('is-invalid');
                     resultCheckEmail.classList.add('invalid-feedback');
@@ -273,27 +273,27 @@
                 formUser.onsubmit = function () {
 
                     if (!isUidOk) {
-                        showModal('아이디가 유효하지 않습니다.');
+                        alertModal('아이디가 유효하지 않습니다.');
                         return false;
                     }
                     if (!isPassOk) {
-                        showModal('비밀번호가 유효하지 않습니다.');
+                        alertModal('비밀번호가 유효하지 않습니다.');
                         return false;
                     }
                     if (!isNameOk) {
-                        showModal('이름이 유효하지 않습니다.');
+                        alertModal('이름이 유효하지 않습니다.');
                         return false;
                     }
                     if (!isNickOk) {
-                        showModal('별명이 유효하지 않습니다.');
+                        alertModal('별명이 유효하지 않습니다.');
                         return false;
                     }
                     if (!isEmailOk) {
-                        showModal('이메일이 유효하지 않습니다.');
+                        alertModal('이메일이 유효하지 않습니다.');
                         return false;
                     }
                     if (!isHpOk) {
-                        showModal('휴대폰 번호가 유효하지 않습니다.');
+                        alertModal('휴대폰 번호가 유효하지 않습니다.');
                         return false;
                     }
                     return true;

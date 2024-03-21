@@ -25,6 +25,8 @@ spring:
     devtools:
         livereload:
             enabled: true
+        restart:
+            enabled: false
     jpa:
         database: mysql
         hibernate:
@@ -47,4 +49,14 @@ spring:
                     starttls:
                         enable: true
         auth-code-expiration-millis: 1800000
+
+    servlet:
+      multipart:
+          location: uploads/
+          max-file-size: 10MB
+
+# 파일 업로드 설정
+file:
+    upload:
+        path: uploads/
 

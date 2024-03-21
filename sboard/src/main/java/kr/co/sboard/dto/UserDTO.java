@@ -24,7 +24,7 @@ public class UserDTO {
     private String addr2;
     private String regIp;
     private String sms;
-    private LocalDateTime rDate;
+    private LocalDateTime regDate;
     private LocalDateTime leaveDate;
 
 }

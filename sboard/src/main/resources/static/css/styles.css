@@ -28,7 +28,7 @@
   --bs-gray-100: #f8f9fa;
   --bs-gray-200: #e9ecef;
   --bs-gray-300: #dee2e6;
-  --bs-gray-400: #ced4da;
+  --bs-gray-400: #bbc2c8;
   --bs-gray-500: #adb5bd;
   --bs-gray-600: #6c757d;
   --bs-gray-700: #495057;
@@ -245,11 +245,11 @@ sup {
 }
 
 a {
-  color: var(--bs-link-color);
-  text-decoration: underline;
+  color: var(--bs-body-color);
+  text-decoration: none;
 }
 a:hover {
-  color: var(--bs-link-hover-color);
+  color: var(--bs-black);
 }
 
 a:not([href]):not([class]), a:not([href]):not([class]):hover {
@@ -398,7 +398,7 @@ button:not(:disabled),
 }
 
 textarea {
-  resize: vertical;
+  resize: none; <!-- resize none -->
 }
 
 fieldset {
@@ -4522,7 +4522,7 @@ textarea.form-control-lg {
   --bs-pagination-bg: #fff;
   --bs-pagination-border-width: 1px;
   --bs-pagination-border-color: #dee2e6;
-  --bs-pagination-border-radius: 0.375rem;
+  --bs-pagination-border-radius: 0.1rem; /* 0.375rem 에서 0으로 고쳐서 페이지 버튼 각지게*/
   --bs-pagination-hover-color: var(--bs-link-hover-color);
   --bs-pagination-hover-bg: #e9ecef;
   --bs-pagination-hover-border-color: #dee2e6;
@@ -11240,4 +11240,10 @@ body {
   width: 20px !important;
   font-size: 0.75rem;
   border-radius: 0.375rem !important;
+}
+#comment {
+  background-color: #f5f7f8;
+}
+#articleCard {
+  background-color: #f5f7f8;
 }
