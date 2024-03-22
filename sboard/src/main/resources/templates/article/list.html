@@ -2,9 +2,24 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="/layout/defaultLayout.html">
 <div class="container-fluid px-4" layout:fragment="content">
-    <h1 class="mt-4">게시판 목록</h1>
+    <script th:inline="javascript">
+        window.onload = function (){
+            const articleSubTitle = document.getElementById('articleSubTitle');
+            const cate = [[${pageResponseDTO.cate}]];
+            if(cate === 'faq'){
+                articleSubTitle.innerText = '자주묻는질문';
+            }else if(cate === 'notice'){
+                articleSubTitle.innerText = '공지사항';
+            }else if(cate === 'free'){
+                articleSubTitle.innerText = '자유게시판';
+            }else if(cate === 'qna'){
+                articleSubTitle.innerText = '묻고답하기';
+            }
+        }
+    </script>
+    <h1 class="mt-4">게시판</h1>
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item active">000 게시판 글목록</li>
+        <li class="breadcrumb-item active" id="articleSubTitle">000 게시판 글목록</li>
     </ol>
     <!-- 내용 시작 -->
     <div class="card mb-4">
@@ -51,9 +66,12 @@
                     <a class="page-link" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=${pageResponseDTO.start - 1})}">&#60;</a>
                 </li>
                 <!-- 페이지 넘버 반복 -->
-                    <li class="page-item" th:each="num:${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
-                        <a class="page-link" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=${num})}">[[${num}]]</a>
-                    </li>
+                <li class="page-item" th:each="num:${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
+                    <a th:classappend="${pageResponseDTO.pg == num} ? 'page-link current-page' : 'page-link'" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=${num})}">
+                        [[${num}]]
+                    </a>
+                </li>
+
                 <!-- 다음 페이지 -->
                 <li th:if="${pageResponseDTO.next}" class="page-item">
                     <a class="page-link" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=${pageResponseDTO.end + 1})}">&#62;</a>

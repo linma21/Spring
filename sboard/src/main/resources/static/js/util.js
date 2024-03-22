@@ -107,6 +107,29 @@ function confirmModal(message) {
         };
     });
 }
+////////댓글 수정 시 수정모드 해제
+function noModifyMode(comment){
+
+    const btnModify = comment.getElementsByClassName('btnModify')[0];
+    const btnRemove = comment.getElementsByClassName('btnRemove')[0];
+    const textarea = comment.getElementsByTagName('textarea')[0];
+
+    // 아이콘
+    const trashIcon = document.createElement('i');
+    trashIcon.classList.add('bi', 'bi-trash3-fill');
+    btnRemove.parentNode.insertBefore(trashIcon, btnRemove);
+
+    const penIcon = document.createElement('i');
+    penIcon.classList.add('bi', 'bi-pencil-fill');
+    btnModify.parentNode.insertBefore(penIcon, btnModify);
+
+    textarea.readOnly = true;
+    textarea.style.outline = "none"
+    btnModify.dataset.mode = 'modify';
+    btnRemove.textContent = ' 삭제';
+    btnRemove.dataset.mode = 'remove';
+    btnModify.textContent = ' 수정';
+}
 
 function postcode(){
     new daum.Postcode({

@@ -31,7 +31,7 @@
 
                 const comments = await fetchGet(`/sboard/comment/${parent}`);
 
-                if(comments.length > 0) {
+                if (comments.length > 0) {
                     for (const comment of comments) {
                         commentPlaceholder.remove();
                         let commentArticle = "";
@@ -58,9 +58,8 @@
                         const commentBtn = `
                                          <div class="d-flex justify-content-between align-items-center">
                                              <p class="small mb-0" style="color: #aaa;">
-
-                                                     <a href="#" class="link-grey btnRemove" data-mode="remove" data-no="${comment.no}"><i class="bi bi-trash3-fill"></i> 삭제</a> •
-                                                     <a href="#" class="link-grey btnModify" data-mode="modify" data-no="${comment.no}"><i class="bi bi-pencil-fill"></i> 수정</a>
+                                                     <a href="#" class="link-grey btnModify" data-mode="modify" data-no="${comment.no}"><i class="bi bi-pencil-fill"></i> 수정</a> •
+                                                     <a href="#" class="link-grey btnRemove" data-mode="remove" data-no="${comment.no}"><i class="bi bi-trash3-fill"></i> 삭제</a>
                                              </p>
                                              <div class="d-flex flex-row">
                                                  <i class="fas fa-star text-warning me-2"></i>
@@ -81,7 +80,7 @@
                         // 태그 문자열 삽입
                         commentContainer.insertAdjacentHTML('beforeend', commentArticle);
                     }
-                }else{
+                } else {
                     commentPlaceholder.remove();
                     const commentHtml = `
                                 <div class="card mt-3 comment" id="noComment">
@@ -94,15 +93,13 @@
                                                             <span class="text-dark ms-2">
                                                             댓글이 없습니다. 😥
                                                               첫 번째 댓글을 남겨주세요.
-</span>
+                                                            </span>
                                                         </h4>
                                                     </div>
-
                                                 </div>
                                             </div>
                                         </div>
-                                        </div>
-                                    `;
+                                        </div>`;
                     console.log(commentHtml);
 
                     commentContainer.insertAdjacentHTML('beforeend', commentHtml);
@@ -113,25 +110,25 @@
             //////////////////////////////////////////////////////////////////////////
             commentForm.onsubmit = async function (e) {
 
-                    const pg = commentForm.querySelector('input[name="pg"]').value;
-                    const parent = commentForm.querySelector('input[name="parent"]').value;
-                    const url = `/sboard/comment?page=${pg}`;
-                    e.preventDefault();
-                    const jsonData = {
-                        "writer": commentForm.querySelector('input[name="writer"]').value,
-                        "cate": commentForm.querySelector('input[name="cate"]').value,
-                        "parent": parent,
-                        "content": commentForm.content.value
-                    };
-                    console.log(jsonData);
-                    const data = await fetchPost(url, jsonData);
-                    console.log(data);
-                    const noComment = document.getElementById('noComment');
-                    if (noComment) {
-                        noComment.remove();
-                    }
-                    // 댓글 목록 동적 처리
-                    const commentHtml = `
+                const pg = commentForm.querySelector('input[name="pg"]').value;
+                const parent = commentForm.querySelector('input[name="parent"]').value;
+                const url = `/sboard/comment?page=${pg}`;
+                e.preventDefault();
+                const jsonData = {
+                    "writer": commentForm.querySelector('input[name="writer"]').value,
+                    "cate": commentForm.querySelector('input[name="cate"]').value,
+                    "parent": parent,
+                    "content": commentForm.content.value
+                };
+                console.log(jsonData);
+                const data = await fetchPost(url, jsonData);
+                console.log(data);
+                const noComment = document.getElementById('noComment');
+                if (noComment) {
+                    noComment.remove();
+                }
+                // 댓글 목록 동적 처리
+                const commentHtml = `
                                 <div class="card mt-3 comment " id="comment">
                                         <div class="card-body">
                                             <div class="d-flex flex-start">
@@ -152,8 +149,8 @@
                                                     <!-- 댓글 작성자와 현재 사용자가 동일한 경우에만 삭제 및 수정 버튼을 표시 -->
                                                     <div class="d-flex justify-content-between align-items-center">
                                                         <p class="small mb-0" style="color: #aaa;">
-                                                            <a href="#!" class="link-grey"><i class="bi bi-trash3-fill"></i> 삭제</a> •
-                                                            <a href="#!" class="link-grey"><i class="bi bi-pencil-fill"></i> 수정</a>
+                                                            <a href="#!" class="link-grey"><i class="bi bi-pencil-fill"></i> 수정</a>  •
+                                                            <a href="#!" class="link-grey"><i class="bi bi-trash3-fill"></i> 삭제</a>
                                                         </p>
                                                         <div class="d-flex flex-row">
                                                             <i class="fas fa-star text-warning me-2"></i>
@@ -165,17 +162,17 @@
                                         </div>
                                         </div>
                                     `;
-                    console.log(commentHtml);
-                    commentForm.content.value = "";
-                    commentContainer.insertAdjacentHTML('beforeend', commentHtml);
-                };
+                console.log(commentHtml);
+                commentForm.content.value = "";
+                commentContainer.insertAdjacentHTML('beforeend', commentHtml);
+            };
             //////////////////////////////////////////////////////////////////////////
             // 댓글 삭제 수정
             //////////////////////////////////////////////////////////////////////////
-
-
             document.addEventListener('click', async function (e) {
-                if (e.target.tagName === 'A') {
+
+                // 다른 페이지 이동, 댓글 등록 등은 제외 해야함
+                if (e.target.tagName === 'A' && e.target.dataset.mode != null) {
                     e.preventDefault();
 
                     // 삭제
@@ -209,26 +206,11 @@
                         btnRemove.dataset.mode = 'cancel';
 
                     } else if (e.target.dataset.mode == 'cancel') {
-                        alertModal('취소!');
+                        alertModal('수정 취소');
                         const comment = e.target.closest('.comment');
-                        const btnModify = comment.getElementsByClassName('btnModify')[0];
-                        const btnRemove = comment.getElementsByClassName('btnRemove')[0];
-                        const textarea = comment.getElementsByTagName('textarea')[0];
 
-                        // 아이콘
-                        const trashIcon = document.createElement('i');
-                        trashIcon.classList.add('bi', 'bi-trash3-fill');
-                        btnRemove.parentNode.insertBefore(trashIcon, btnRemove);
-
-                        const penIcon = document.createElement('i');
-                        penIcon.classList.add('bi', 'bi-pencil-fill');
-                        btnModify.parentNode.insertBefore(penIcon, btnModify);
-
-                        textarea.readOnly = true;
-                        textarea.style.outline = "none"
-                        btnModify.dataset.mode = 'modify';
-                        btnRemove.textContent = ' 삭제';
-                        btnRemove.dataset.mode = 'remove';
+                        // 수정 모드 해제 함수
+                        noModifyMode(comment);
 
                     } else if (e.target.dataset.mode == 'update') {
                         const comment = e.target.closest('.comment');
@@ -248,32 +230,11 @@
 
                         alertModal("수정되었습니다.");
 
-                        // 아이콘
-                        const trashIcon = document.createElement('i');
-                        trashIcon.classList.add('bi', 'bi-trash3-fill');
-                        btnRemove.parentNode.insertBefore(trashIcon, btnRemove);
-
-                        const penIcon = document.createElement('i');
-                        penIcon.classList.add('bi', 'bi-pencil-fill');
-                        btnModify.parentNode.insertBefore(penIcon, btnModify);
-
-
-                        textarea.readOnly = true;
-                        textarea.style.outline = "none"
-                        btnModify.dataset.mode = 'modify';
-                        btnRemove.textContent = ' 삭제';
-                        btnRemove.dataset.mode = 'remove';
-                        btnModify.textContent = ' 수정';
+                        noModifyMode(comment);
                     } else if (e.target.dataset.mode == 'return') {
                         const cate = postForm.cate.value;
                         const pg = postForm.pg.value;
                         window.location.href = '/sboard/article/list?pg=' + pg + '&cate=' + cate;
-
-                    } else if (e.target.type == 'submit') {
-                        commentForm.submit();
-
-                    } else if (e.target.dataset.mode == 'goToIndex') {
-                        location.href = "/sboard/index";
 
                     }
                 }
@@ -316,7 +277,6 @@
                                th:data-fno="${file.fno}">[[${file.oName}]]</a>
                             <span class="badge text-bg-primary rounded-pill">[[${file.download}]]</span>
                         </li>
-
                     </ul>
                 </div>
             </form>
@@ -324,7 +284,7 @@
     </div>
     <div class="text-end">
         <a th:href="@{'/article/list?pg=' + ${pageResponseDTO.pg} + '&cate=' + ${pageResponseDTO.cate}}"
-           class="btn btn-secondary" data-mode="return">목록</a>
+           class="btn btn-secondary">목록</a>
     </div>
     <!-- 댓글 목록 -->
     <div id="commentContainer">
@@ -349,8 +309,8 @@
                         <!-- 댓글 작성자와 현재 사용자가 동일한 경우에만 삭제 및 수정 버튼을 표시 -->
                         <div class="d-flex justify-content-between align-items-center">
                             <p class="small mb-0" style="color: #aaa;">
-                                <a href="#!" class="link-grey placeholder">삭제</a> •
                                 <a href="#!" class="link-grey placeholder">수정</a>
+                                <a href="#!" class="link-grey placeholder">삭제</a> •
                             </p>
                             <div class="d-flex flex-row">
                                 <i class="fas fa-star text-warning me-2"></i>
