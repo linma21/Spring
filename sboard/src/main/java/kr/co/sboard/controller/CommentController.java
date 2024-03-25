@@ -30,7 +30,7 @@ public class CommentController {
         int no = articleDTO.getParent();
         String regIp = req.getRemoteAddr();
 
-        articleDTO.setUser(userService.selectUser(writer));
+        //articleDTO.setUser(userService.selectUser(writer));
         articleDTO.setRegIp(regIp);
 
         return commentService.insertComment(articleDTO);

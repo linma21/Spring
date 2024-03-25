@@ -7,9 +7,9 @@ import kr.co.sboard.dto.UserDTO;
 import kr.co.sboard.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Repository;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,9 +24,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/user/login")
-    public String login(@ModelAttribute("success") String success){
-        // 매개변수 success에 @ModelAttribute 선언으로 View 참조 가능
-
+    public String login(@ModelAttribute("success") String success, Model model){
+            // 매개변수 success에 @ModelAttribute 선언으로 View 참조 가능
         return ("/user/login");
     }
     @GetMapping("/user/terms")
@@ -86,5 +85,53 @@ public class UserController {
             return ResponseEntity.ok().body(resultMap);
         }
 
+    }
+    @GetMapping("/user/findId")
+    public String findId(){
+        return "/user/findId";
+    }
+    @GetMapping("/user/findIdResult")
+    public String findIdResult(HttpSession session, Model model){
+        UserDTO userDTO = (UserDTO) session.getAttribute("sessUser");
+        model.addAttribute("userDTO", userDTO);
+        return "/user/findIdResult";
+    }
+    @PostMapping("/user/findId")
+    public ResponseEntity<?> findId(@RequestBody UserDTO userDTO, HttpSession session){
+        String name = userDTO.getName();
+        String email = userDTO.getEmail();
+
+        UserDTO sessUser = userService.findIdByEmail(name, email);
+        if(sessUser != null) {
+            session.setAttribute("sessUser", sessUser);
+            return ResponseEntity.ok().body(sessUser);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("name is wrong");
+    }
+    @GetMapping("/user/findPassword")
+    public String findPassword(){
+        return "/user/findPassword";
+    }
+    @PostMapping("/user/findPassword")
+    public ResponseEntity<?> findPassword(@RequestBody UserDTO userDTO, HttpSession session){
+        String uid = userDTO.getUid();
+        String email = userDTO.getEmail();
+
+        UserDTO sessUser = userService.findPassword(uid, email);
+        if(sessUser != null) {
+            session.setAttribute("sessUser", sessUser);
+            return ResponseEntity.ok().body(sessUser);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("uid is wrong");
+    }
+
+    @GetMapping("/user/findPasswordChange")
+    public String findPasswordChange(HttpSession session, Model model){
+        model.addAttribute("sessUser", session.getAttribute("sessUser"));
+        return "/user/findPasswordChange";
+    }
+    @PutMapping("/user/findPasswordChange")
+    public ResponseEntity<?> findPasswordChange(@RequestBody UserDTO userDTO){
+        return userService.updateUserPass(userDTO);
     }
 }

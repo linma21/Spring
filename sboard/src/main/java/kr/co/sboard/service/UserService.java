@@ -10,6 +10,8 @@ import kr.co.sboard.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -65,10 +67,26 @@ public class UserService {
     public UserDTO selectUser (String uid){
         return mapper.selectUser(uid);
     }
+    public UserDTO findIdByEmail (String name, String email) {
+        return mapper.findIdByEmail(name, email);
+    }
+    public UserDTO findPassword (String uid, String email) {
+        return mapper.findPassword(uid, email);
+    }
     public int selectCountUser (String type, String value){
         return mapper.selectCountUser(type, value);
     }
     public void selectUsers (){}
     public void updateUser (UserDTO userDTO){}
+    public ResponseEntity<?> updateUserPass (UserDTO userDTO){
+        String encoded = passwordEncoder.encode(userDTO.getPass());
+        UserDTO selUser = mapper.selectUser(userDTO.getUid());
+        if(selUser != null){
+            selUser.setPass(encoded);
+            mapper.updateUserPass(selUser);
+            return ResponseEntity.ok().body(selUser);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user not found");
+    }
     public void deleteUser (String uid){}
 }

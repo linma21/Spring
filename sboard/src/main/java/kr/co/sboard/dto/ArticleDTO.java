@@ -27,6 +27,5 @@ public class ArticleDTO {
     private LocalDateTime rDate;
 
     private List<MultipartFile> files;
-    private UserDTO user;
     private List<FileDTO> fileList;
 }

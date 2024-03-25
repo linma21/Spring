@@ -4,7 +4,7 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.sboard.mapper.UserMapper">
     <insert id="insertUser">
-        INSERT INTO User SET
+        INSERT INTO user SET
                         uid =#{uid},
                         pass =#{pass},
                         name =#{name},
@@ -20,13 +20,19 @@
     </insert>
 
     <select id="selectTerms" resultType="kr.co.sboard.dto.TermsDTO">
-        SELECT * FROM TERMS
+        SELECT * FROM terms
     </select>
     <select id="selectUser" resultType="kr.co.sboard.dto.UserDTO">
-        SELECT * FROM User WHERE uid=#{uid}
+        SELECT * FROM user WHERE uid=#{uid}
+    </select>
+    <select id="findIdByEmail" resultType="kr.co.sboard.dto.UserDTO">
+        SELECT * FROM user WHERE name=#{name} AND email=#{email}
+    </select>
+    <select id="findPassword" resultType="kr.co.sboard.dto.UserDTO">
+        SELECT * FROM user WHERE uid=#{uid} AND email=#{email}
     </select>
     <select id="selectCountUser" resultType="int">
-        SELECT COUNT(*) FROM User
+        SELECT COUNT(*) FROM user
         <where>
             <if test="type == 'uid'">uid=#{value}</if>
             <if test="type == 'nick'">nick=#{value}</if>
@@ -34,4 +40,7 @@
             <if test="type == 'email'">email=#{value}</if>
         </where>
     </select>
+    <update id="updateUserPass">
+        UPDATE user SET pass=#{pass} where uid=#{uid}
+    </update>
 </mapper>

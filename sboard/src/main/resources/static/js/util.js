@@ -1,3 +1,25 @@
+function formToJson(form) {
+    const formData = new FormData();
+    // 파일 입력 요소의 값 추가
+    const filesInput = form.querySelector('input[type="file"]');
+    if (filesInput) {
+        for (const file of filesInput.files) {
+            formData.append('files', file);
+        }
+    }
+
+    // 나머지 폼 요소의 값 추가 (JSON 형식으로 변환하여 formData에 추가)
+    const otherInputs = form.querySelectorAll('input:not([type="file"]), textarea');
+    const jsonData = {};
+    otherInputs.forEach(input => {
+        jsonData[input.name] = input.value;
+    });
+    // JSON 데이터를 FormData에 추가
+    formData.append('articleDTO', JSON.stringify(jsonData));
+
+    return formData;
+}
+
 async function fetchGet(url){
     console.log("fetchGet : "+url);
     try{
@@ -6,6 +28,7 @@ async function fetchGet(url){
             throw new Error("response not ok");
         }
         const data = await response.json();
+        console.log("fetchGet data : "+data);
         return data;
 
     }catch (err) {
@@ -14,19 +37,19 @@ async function fetchGet(url){
 }
 async function fetchPost(url, jsonData){
 
-    console.log("fetchData2...1");
+    console.log("fetchPost...1" +jsonData);
 
     try{
-        console.log("fetchData2...2");
+        console.log("fetchPost...2");
         const response = await fetch(url, {
             method: 'POST',
             headers: {"Content-type":"application/json"},
             body: JSON.stringify(jsonData)
         });
-        console.log("fetchData2...3");
+        console.log("fetchPost...3"+JSON.stringify(jsonData));
 
         if(!response.ok){
-            console.log("fetchData2...4");
+            console.log("fetchPost...4");
             throw new Error('response not ok');
         }
 
@@ -36,7 +59,8 @@ async function fetchPost(url, jsonData){
         return data;
 
     }catch (err) {
-        console.log(err)
+        console.log(err);
+        return null;
     }
 }
 // PUT
@@ -59,9 +83,32 @@ async function fetchPut(url, jsonData){
         return data;
 
     }catch (err) {
+        console.log(err);
+        return null;
+    }
+}
+// 게시글 + 파일 수정
+async function fetchPutForFile(url, formData) {
+    console.log("fetchPutForFile...1");
+    try {
+        const response = await fetch(url, {
+            method: 'PUT',
+            body: formData
+        });
+        console.log("fetchPutForFile...2");
+        if (!response.ok) {
+            throw new Error('response not ok');
+        }
+        console.log("fetchPutForFile...3");
+        const data = await response.json();
+        console.log("data1 : " + data);
+        console.log("fetchPutForFile...4");
+        return data;
+    } catch (err) {
         console.log(err)
     }
 }
+
 async function fetchDelete(url) {
     try {
         const response = await fetch(url, {
@@ -88,21 +135,22 @@ function alertModal(message){
     resultModal.show();
 }
 function confirmModal(message) {
-    const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+    const modal = document.getElementById('confirmModal');
     modal.getElementsByClassName('modal-body')[0].innerText = message;
-    modal.show(); // 모달 열기
+    const resultModal = new bootstrap.Modal(modal);
+    resultModal.show(); // 모달 열기
 
     // 결과값 반환
     return new Promise(resolve => {
         // 확인 버튼 클릭 시
         document.getElementById('btnOk').onclick = function () {
-            modal.hide(); // 모달 닫기
+            resultModal.hide(); // 모달 닫기
             resolve(true); // 확인 결과값 반환
         };
 
         // 취소 버튼 클릭 시
         document.getElementById('btnCancel').onclick = function () {
-            modal.hide(); // 모달 닫기
+            resultModal.hide(); // 모달 닫기
             resolve(false); // 취소 결과값 반환
         };
     });

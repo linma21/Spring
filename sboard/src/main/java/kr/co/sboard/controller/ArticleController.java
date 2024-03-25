@@ -4,23 +4,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import kr.co.sboard.dto.ArticleDTO;
 import kr.co.sboard.dto.PageRequestDTO;
 import kr.co.sboard.dto.PageResponseDTO;
+import kr.co.sboard.entity.Article;
 import kr.co.sboard.service.ArticleService;
 import kr.co.sboard.service.CommentService;
-import kr.co.sboard.service.FileService;
 import kr.co.sboard.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.IntStream;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -30,7 +24,6 @@ public class ArticleController {
     private final ArticleService articleService;
     private final CommentService commentService;
     private final UserService userService;
-    private final ModelMapper modelMapper;
 
     @GetMapping("/article/list")
     public String list(PageRequestDTO pageRequestDTO
@@ -50,7 +43,7 @@ public class ArticleController {
     public String write(@ModelAttribute("writer") String writer, HttpServletRequest req, ArticleDTO articleDTO){
         // 전송된 사용자 식별자를 사용하여 사용자 정보를 가져옴
         //User user = modelMapper.map(userService.selectUser(writer), User.class);
-        articleDTO.setUser(userService.selectUser(writer));
+        //articleDTO.setUser(userService.selectUser(writer));
         String regIp = req.getRemoteAddr();
         articleDTO.setRegIp(regIp);
 
@@ -79,6 +72,18 @@ public class ArticleController {
         model.addAttribute("pageResponseDTO", pageResponseDTO);
         model.addAttribute("article", article);
         return "/article/view";
+    }
+    @PutMapping("/article")
+    public ResponseEntity<?> modifyArticle(@RequestParam("files") MultipartFile[] files,
+                                           @RequestBody ArticleDTO articleDTO) {
+
+        log.info("modifyArticle : " + articleDTO.toString());
+        return articleService.updateArticle(articleDTO);
+    }
+
+    @DeleteMapping("/article/{no}")
+    public ResponseEntity<?> deleteArticle(@PathVariable("no") int no){
+        return articleService.deleteArticle(no);
     }
 
 }

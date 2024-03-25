@@ -15,8 +15,13 @@ public interface UserMapper {
 
     public UserDTO selectUser(String uid);
 
+    public UserDTO findIdByEmail(@Param("name") String name, @Param("email") String email);
+    public UserDTO findPassword(@Param("uid") String uid, @Param("email") String email);
+
+
     public int selectCountUser(@Param("type") String type, @Param("value") String value);
     public List<UserDTO> selectUsers();
+    public void updateUserPass(UserDTO userDTO);
     public void updateUser(UserDTO userDTO);
     public void deleteUser(String uid);
 

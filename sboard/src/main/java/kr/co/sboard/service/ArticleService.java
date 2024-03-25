@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,5 +100,59 @@ public class ArticleService {
                 .dtoList(dtoList)
                 .total(total)
                 .build();
+    }
+    @Transactional
+    public ResponseEntity<?> updateArticle(ArticleDTO articleDTO){
+        log.info("updateArticle : " + articleDTO.toString());
+
+        Optional<Article> optArticle = articleRepository.findById(articleDTO.getNo());
+
+        if(optArticle.isPresent()){
+            // 파일 업로드
+            List<FileDTO> files = fileService.fileUpload(articleDTO);
+
+            Article article = optArticle.get();
+            article.setFile(files.size() + article.getFile());
+            article.setContent(articleDTO.getContent());
+            log.info("updateArticle ...3 : "+ article);
+
+            Article modifiedArticle = articleRepository.save(article);
+            log.info("updateArticle ...4 : "+ article);
+
+            // 파일 insert
+            for(FileDTO fileDTO : files){
+                fileDTO.setAno(modifiedArticle.getNo());
+                File file = modelMapper.map(fileDTO, File.class);
+
+                fileRepository.save(file);
+            }
+
+            return ResponseEntity.ok().body(modifiedArticle);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("not found");
+    }
+    @Transactional
+    public ResponseEntity<?> deleteArticle(int no){
+
+        log.info("deleteArticle no :" + no);
+        Optional<Article> optArticle = articleRepository.findById(no);
+        log.info("deleteArticle optArticle :" + optArticle.toString());
+        if (optArticle.isPresent()){
+            // 파일 삭제
+            Article article = optArticle.get();
+            if(article.getFile() > 0) {
+                fileRepository.deleteFilesByAno(no);
+            }
+            // 댓글 삭제
+            if(article.getComment() > 0) {
+                articleRepository.deleteArticlesByParent(no);
+            }
+            // 게시글 삭제
+            articleRepository.deleteById(no);
+
+            return ResponseEntity.ok().body(optArticle.get());
+        }else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("not found");
+        }
     }
 }

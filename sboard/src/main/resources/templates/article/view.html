@@ -1,12 +1,14 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="/layout/defaultLayout.html">
+      layout:decorate="~{/layout/defaultLayout}">
 <div class="container-fluid px-4" layout:fragment="content">
     <script th:inline="javascript">
         window.onload = function () {
-            const postForm = document.getElementById('postForm');
+            const putForm = document.getElementById('putForm');
             const commentForm = document.getElementById('commentForm');
             const btnComment = document.getElementsByClassName('btnComment')[0];
+            const articleModify = document.getElementById('articleModify');
+            const articleDelete = document.getElementById('articleDelete');
 
             const fileLinks = document.getElementsByClassName('fileLink');
 
@@ -19,6 +21,7 @@
                     this.nextElementSibling.innerHTML = parseInt(count) + 1;
                 }
             }
+
             //////////////////////////////////////////////////////////////////////////
             // 댓글 불러오기
             //////////////////////////////////////////////////////////////////////////
@@ -26,10 +29,14 @@
             const commentPlaceholder = document.getElementById('commentPlaceholder');
             const parent = [[${article.no}]];
             console.log(parent);
-            const thisUser = postForm.user.value;
+
+            const thisUser = putForm.user.value;
             setTimeout(async function () {
 
+                console.log('here...1');
+
                 const comments = await fetchGet(`/sboard/comment/${parent}`);
+                console.log('here...2 : ' + comments);
 
                 if (comments.length > 0) {
                     for (const comment of comments) {
@@ -43,7 +50,7 @@
                                      <div class="w-100">
                                          <div class="d-flex justify-content-between align-items-center mb-3">
                                              <h6 class="text-primary fw-bold mb-0">
-                                                 ${comment.user.nick}
+                                                 ${comment.writer}
                                                  <span class="text-dark ms-2"></span>
                                              </h6>
                                              <div class="ml-auto">
@@ -72,7 +79,7 @@
                                  </div>
                              </div>`;
 
-                        if (comment.user.uid === thisUser) {
+                        if (comment.writer === thisUser) {
                             commentArticle = commentTop + commentBtn + commentEnd;
                         } else {
                             commentArticle = commentTop + commentEnd;
@@ -136,7 +143,7 @@
                                                 <div class="w-100">
                                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                                         <h6 class="text-primary fw-bold mb-0">
-                                                            ${data.user.nick}
+                                                            ${data.writer}
                                                             <span class="text-dark ms-2"></span>
                                                         </h6>
                                                         <div class="ml-auto">
@@ -182,7 +189,7 @@
 
                         console.log("no : " + no);
 
-                        const data = fetchDelete(`/sboard/comment/${no}`);
+                        const data = await fetchDelete(`/sboard/comment/${no}`);
                         if (data) {
                             alertModal("삭제 되었습니다.");
                             comment.remove();
@@ -226,16 +233,81 @@
 
                         console.log(jsonData);
 
-                        const data = fetchPut('/sboard/comment', jsonData);
+                        const data = await fetchPut('/sboard/comment', jsonData);
 
                         alertModal("수정되었습니다.");
 
                         noModifyMode(comment);
                     } else if (e.target.dataset.mode == 'return') {
-                        const cate = postForm.cate.value;
-                        const pg = postForm.pg.value;
+                        const cate = putForm.cate.value;
+                        const pg = putForm.pg.value;
                         window.location.href = '/sboard/article/list?pg=' + pg + '&cate=' + cate;
 
+                    }
+
+                    //////////////////////////////////////////////////////////////////////////
+                    // 게시글 수정 삭제
+                    //////////////////////////////////////////////////////////////////////////
+                }else if(e.target.tagName === 'BUTTON'){
+                    const fileUpload = document.getElementById('fileUpload');
+                    const contentTextarea = document.getElementById('articleFormControlTextarea1');
+                    const removeFile = document.getElementById('removeFile');
+                    const no = putForm.no.value;
+                    const cate = putForm.cate.value;
+
+                    // 게시글 수정 //////////////////////////////////////////////////////////////////////////
+                    if(e.target.id === 'articleModify' && e.target.dataset.mode === 'modify') {
+
+                        // 수정 모드
+                        contentTextarea.readOnly = false;
+                        fileUpload.classList.remove('visually-hidden');
+                        removeFile.classList.remove('visually-hidden');
+                        articleDelete.innerText = '취소';
+                        articleModify.innerText = '수정완료';
+                        e.target.dataset.mode = 'submit';
+
+                    }else if(e.target.id === 'articleModify' && e.target.dataset.mode === 'submit') {
+                        const putForm = document.getElementById('putForm');
+
+                        // file은 json에 포함될 수 없다.
+
+                        // 수정 데이터 json으로 생성
+                        const formData = formToJson(putForm);
+                        console.log(formData);
+
+                        // 수정 데이터 전송
+                        const data = await fetchPutForFile('/sboard/article', formData);
+
+                        alertModal("수정되었습니다.");
+
+                        contentTextarea.readOnly = true;
+                        fileUpload.classList.add('visually-hidden');
+                        removeFile.classList.add('visually-hidden');
+                        articleDelete.innerText = '삭제';
+                        e.target.dataset.mode = 'modify';
+
+                        // 게시글 삭제 //////////////////////////////////////////////////////////////////////////
+                    }else if(e.target.id === 'articleDelete'){
+
+                        if(articleDelete.innerText === '삭제') {
+                            if (await confirmModal('게시글을 삭제하시겠습니까?')) {
+
+                                const data = await fetchDelete(`/sboard/article/${no}`);
+                                if (data) {
+                                    alertModal("삭제 되었습니다.");
+                                    location.href = '/sboard/article/list?cate=' + cate;
+                                }
+                            }
+                            // 게시글 수정 취소 //////////////////////////////////////////////////////////////////////
+                        }else if(articleDelete.innerText === '취소'){
+                            if (await confirmModal('게시글을 수정을 취소하시겠습니까?')) {
+                                contentTextarea.readOnly = true;
+                                fileUpload.classList.add('visually-hidden');
+                                removeFile.classList.add('visually-hidden');
+                                articleDelete.innerText = '삭제';
+                                e.target.dataset.mode = 'modify';
+                            }
+                        }
                     }
                 }
             });
@@ -246,17 +318,18 @@
         <li class="breadcrumb-item active">000 글보기</li>
     </ol>
     <!-- 내용 시작 -->
-    <div class="card mb-4">
+    <div class="card mb-2">
         <div class="card-header">
             <i class="bi bi-file-earmark-text fs-4"></i>
 
             <label th:text="${article.title}" class="fw-bold fs-5"></label>
         </div>
         <div class="card-body" id="articleCard">
-            <form action="#" id="postForm">
+            <form action="#" id="putForm" enctype="multipart/form-data">
                 <input type="hidden" name="cate" th:value="${pageResponseDTO.cate}">
                 <input type="hidden" name="pg" th:value="${pageResponseDTO.pg}">
-                <input type="hidden" name="no" value="0">
+                <input type="hidden" name="no" th:value="${article.no}">
+                <input type="hidden" name="writer" th:value="${article.writer}">
                 <input type="hidden" name="user" th:value="${#authentication.principal.user.uid}">
                 <!--
                 <div class="mb-3">
@@ -264,8 +337,8 @@
                     <input type="text" class="form-control" id="exampleFormControlInput1" name="title" th:value="${article.title}" readonly>
                 </div> -->
                 <div class="mb-3">
-                    <label for="exampleFormControlTextarea1" class="form-label fw-bolder">글내용</label>
-                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="10" name="content" readonly>[[${article.content}]]</textarea>
+                    <label for="articleFormControlTextarea1" class="form-label fw-bolder">글내용</label>
+                    <textarea class="form-control" id="articleFormControlTextarea1" rows="10" name="content" readonly>[[${article.content}]]</textarea>
                 </div>
                 <div th:if="${article.file > 0}" class="mb-3">
                     <i class="bi bi-paperclip fs-4"></i>
@@ -276,15 +349,24 @@
                             <a th:href="@{/file/download/{fno}(fno=${file.fno})}" class="fileLink"
                                th:data-fno="${file.fno}">[[${file.oName}]]</a>
                             <span class="badge text-bg-primary rounded-pill">[[${file.download}]]</span>
+                            <a href="#" class="link-grey visually-hidden" id="removeFile" th:data-fno="${file.fno}"><i class="bi bi-trash3-fill"></i> 삭제</a>
                         </li>
                     </ul>
+                </div>
+                <div class="mb-3 visually-hidden" id="fileUpload">
+                    <label for="formFileMultiple" class="form-label">파일첨부</label>
+                    <input class="form-control" type="file" name="files" id="formFileMultiple" multiple>
                 </div>
             </form>
         </div>
     </div>
-    <div class="text-end">
+    <div class="text-end" th:if="${#authentication.principal.user.uid == article.writer}">
+        <button type="button" class="btn btn-primary" id="articleModify" data-mode="modify">수정</button>
+        <button type="button" class="btn btn-secondary" id="articleDelete">삭제</button>
+    </div>
+    <div class="text-center">
         <a th:href="@{'/article/list?pg=' + ${pageResponseDTO.pg} + '&cate=' + ${pageResponseDTO.cate}}"
-           class="btn btn-secondary">목록</a>
+           class="btn btn-primary">목록</a>
     </div>
     <!-- 댓글 목록 -->
     <div id="commentContainer">

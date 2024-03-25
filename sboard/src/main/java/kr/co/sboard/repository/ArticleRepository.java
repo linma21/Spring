@@ -26,6 +26,9 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     @Query("UPDATE Article a SET a.hit = a.hit + 1 WHERE a.no = :no")
     void incrementHitByNo(@Param("no") int no);
 
+    // 글 삭제시 연관 댓글 삭제
+    void deleteArticlesByParent(int parent);
+
     // 댓글 작성 시 원문 comment 업
     @Modifying
     @Query("UPDATE Article a SET a.comment = a.comment + 1 WHERE a.no = :no")
