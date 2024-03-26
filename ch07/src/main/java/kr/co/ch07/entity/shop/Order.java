@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = "customer")
+@ToString
 @Builder
 @Entity
 @Table(name = "shop_order")

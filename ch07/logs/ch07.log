@@ -710,3 +710,25 @@ Identify and stop the process that's listening on port 8080 or configure this ap
 2024-03-26T16:41:32.992+09:00  INFO 15276 --- [ch07] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
 2024-03-26T16:41:32.993+09:00  INFO 15276 --- [ch07] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 2024-03-26T16:41:32.998+09:00  INFO 15276 --- [ch07] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-03-26T17:22:55.147+09:00  INFO 11260 --- [ch07] [main] k.co.ch07.repository.shop.QueryDslTest   : Starting QueryDslTest using Java 17.0.9 with PID 11260 (started by java in C:\Users\java\Desktop\workspace\Spring\ch07)
+2024-03-26T17:22:55.148+09:00  INFO 11260 --- [ch07] [main] k.co.ch07.repository.shop.QueryDslTest   : No active profile set, falling back to 1 default profile: "default"
+2024-03-26T17:22:55.524+09:00  INFO 11260 --- [ch07] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-03-26T17:22:55.597+09:00  INFO 11260 --- [ch07] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 67 ms. Found 13 JPA repository interfaces.
+2024-03-26T17:22:55.957+09:00  INFO 11260 --- [ch07] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-03-26T17:22:56.021+09:00  INFO 11260 --- [ch07] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-03-26T17:22:56.055+09:00  INFO 11260 --- [ch07] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2024-03-26T17:22:56.257+09:00  INFO 11260 --- [ch07] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-03-26T17:22:56.279+09:00  INFO 11260 --- [ch07] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-03-26T17:22:56.478+09:00  INFO 11260 --- [ch07] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@4b3ad7ca
+2024-03-26T17:22:56.479+09:00  INFO 11260 --- [ch07] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-03-26T17:22:56.510+09:00  WARN 11260 --- [ch07] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2024-03-26T17:22:57.196+09:00  INFO 11260 --- [ch07] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-03-26T17:22:57.264+09:00  INFO 11260 --- [ch07] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-03-26T17:22:57.574+09:00  INFO 11260 --- [ch07] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-03-26T17:22:58.081+09:00  WARN 11260 --- [ch07] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-03-26T17:22:58.103+09:00  INFO 11260 --- [ch07] [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page template: index
+2024-03-26T17:22:58.659+09:00  INFO 11260 --- [ch07] [main] k.co.ch07.repository.shop.QueryDslTest   : Started QueryDslTest in 3.687 seconds (process running for 4.301)
+2024-03-26T17:22:59.054+09:00  INFO 11260 --- [ch07] [main] k.co.ch07.repository.shop.QueryDslTest   : test10 : [CustomerDTO(custId=a102, name=김춘추, age=0, hp=null, addr=null, regDate=null, orderCount=2)]
+2024-03-26T17:22:59.067+09:00  INFO 11260 --- [ch07] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-03-26T17:22:59.068+09:00  INFO 11260 --- [ch07] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-03-26T17:22:59.074+09:00  INFO 11260 --- [ch07] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
