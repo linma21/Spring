@@ -1,5 +1,6 @@
 package kr.co.sboard.service;
 
+import com.querydsl.core.Tuple;
 import kr.co.sboard.dto.ArticleDTO;
 import kr.co.sboard.dto.FileDTO;
 import kr.co.sboard.dto.PageRequestDTO;
@@ -83,14 +84,52 @@ public class ArticleService {
         return  modelMapper.map(articles, new TypeToken<List<ArticleDTO>>() {}.getType());
     }
     */
-    public PageResponseDTO findByParentAndCate(PageRequestDTO pageRequestDTO){
+    public PageResponseDTO selectArticles(PageRequestDTO pageRequestDTO){
+
+        log.info("selectArticles...1");
+        Pageable pageable = pageRequestDTO.getPageable("no");
+
+        log.info("selectArticles...2");
+        String cate = pageRequestDTO.getCate();
+
+
+        Page<Tuple> pageArticles = articleRepository.selectArticles(pageRequestDTO, pageable);
+
+        log.info("selectArticles...3" + pageArticles);
+        List<ArticleDTO> dtoList = pageArticles.getContent().stream()
+                .map(tuple ->{
+                    log.info("tuple : "+ tuple);
+                    Article article = tuple.get(0, Article.class);
+                    String nick = tuple.get(1, String.class);
+                    article.setNick(nick);
+                    log.info("article : "+ article);
+                    return modelMapper.map(article, ArticleDTO.class);
+                })
+                .toList();
+        log.info("selectArticles...4" +dtoList );
+        int total = (int) pageArticles.getTotalElements();
+
+        return PageResponseDTO.builder()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(dtoList)
+                .total(total)
+                .build();
+    }
+    public PageResponseDTO searchArticles(PageRequestDTO pageRequestDTO){
 
         Pageable pageable = pageRequestDTO.getPageable("no");
-        String cate = pageRequestDTO.getCate();
-        Page<Article> pageArticles = articleRepository.findByParentAndCate(0, pageRequestDTO.getCate(), pageable);
+
+        Page<Tuple> pageArticles = articleRepository.searchArticles(pageRequestDTO, pageable);
 
         List<ArticleDTO> dtoList = pageArticles.getContent().stream()
-                .map(entity -> modelMapper.map(entity, ArticleDTO.class))
+                .map(tuple ->{
+                    log.info("tuple : "+ tuple);
+                    Article article = tuple.get(0, Article.class);
+                    String nick = tuple.get(1, String.class);
+                    article.setNick(nick);
+                    log.info("article : "+ article);
+                    return modelMapper.map(article, ArticleDTO.class);
+                })
                 .toList();
 
         int total = (int) pageArticles.getTotalElements();
@@ -105,29 +144,24 @@ public class ArticleService {
     public ResponseEntity<?> updateArticle(ArticleDTO articleDTO){
         log.info("updateArticle : " + articleDTO.toString());
 
-        Optional<Article> optArticle = articleRepository.findById(articleDTO.getNo());
+        List<FileDTO> files = fileService.fileUpload(articleDTO);
 
-        if(optArticle.isPresent()){
-            // 파일 업로드
-            List<FileDTO> files = fileService.fileUpload(articleDTO);
-
-            Article article = optArticle.get();
-            article.setFile(files.size() + article.getFile());
+        Article article = articleRepository.findById(articleDTO.getNo()).get();
+        if(article != null){
+            article.setFile(article.getFile() + files.size());
             article.setContent(articleDTO.getContent());
-            log.info("updateArticle ...3 : "+ article);
-
-            Article modifiedArticle = articleRepository.save(article);
-            log.info("updateArticle ...4 : "+ article);
+            // 저장 후 저장한 엔티티 객체 반환(JPA save() 메서드는 default로 저장한 Entity를 반환)
+            Article updateArticle = articleRepository.save(article);
+            log.info("updateArticle : " + updateArticle.toString());
 
             // 파일 insert
             for(FileDTO fileDTO : files){
-                fileDTO.setAno(modifiedArticle.getNo());
+                fileDTO.setAno(updateArticle.getNo());
                 File file = modelMapper.map(fileDTO, File.class);
 
                 fileRepository.save(file);
             }
-
-            return ResponseEntity.ok().body(modifiedArticle);
+                return ResponseEntity.ok().body(updateArticle);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("not found");
     }

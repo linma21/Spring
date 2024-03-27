@@ -3,7 +3,6 @@ package kr.co.sboard.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.DialectOverride;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,6 +31,7 @@ public class Article {
     private String content;
     private int file;
     private int hit;
+    private int heart;
 
     private String writer;
 
@@ -42,5 +42,6 @@ public class Article {
     @OneToMany(mappedBy = "ano")
     private List<File> fileList;
 
+    private String nick;
 
 }

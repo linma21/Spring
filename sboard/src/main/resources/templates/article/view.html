@@ -251,7 +251,8 @@
                 }else if(e.target.tagName === 'BUTTON'){
                     const fileUpload = document.getElementById('fileUpload');
                     const contentTextarea = document.getElementById('articleFormControlTextarea1');
-                    const removeFile = document.getElementById('removeFile');
+                    const roundedPills = document.getElementsByClassName('rounded-pill');
+                    const removeFiles = document.getElementsByClassName('removeFile');
                     const no = putForm.no.value;
                     const cate = putForm.cate.value;
 
@@ -261,28 +262,31 @@
                         // 수정 모드
                         contentTextarea.readOnly = false;
                         fileUpload.classList.remove('visually-hidden');
-                        removeFile.classList.remove('visually-hidden');
+
                         articleDelete.innerText = '취소';
                         articleModify.innerText = '수정완료';
                         e.target.dataset.mode = 'submit';
+                        for (const roundedPill of roundedPills) {
+                            roundedPill.classList.add('visually-hidden');
+                        }
+                        for (const removeFile of removeFiles) {
+                            removeFile.classList.remove('visually-hidden');
+                        }
 
                     }else if(e.target.id === 'articleModify' && e.target.dataset.mode === 'submit') {
+                        e.preventDefault();
                         const putForm = document.getElementById('putForm');
+
+                        putForm.submit();
 
                         // file은 json에 포함될 수 없다.
 
-                        // 수정 데이터 json으로 생성
-                        const formData = formToJson(putForm);
-                        console.log(formData);
-
-                        // 수정 데이터 전송
-                        const data = await fetchPutForFile('/sboard/article', formData);
 
                         alertModal("수정되었습니다.");
 
                         contentTextarea.readOnly = true;
                         fileUpload.classList.add('visually-hidden');
-                        removeFile.classList.add('visually-hidden');
+                        removeFiles.classList.add('visually-hidden');
                         articleDelete.innerText = '삭제';
                         e.target.dataset.mode = 'modify';
 
@@ -303,10 +307,41 @@
                             if (await confirmModal('게시글을 수정을 취소하시겠습니까?')) {
                                 contentTextarea.readOnly = true;
                                 fileUpload.classList.add('visually-hidden');
-                                removeFile.classList.add('visually-hidden');
+                                removeFiles.classList.add('visually-hidden');
                                 articleDelete.innerText = '삭제';
                                 e.target.dataset.mode = 'modify';
                             }
+                        }
+                        // 게시글 좋아요
+                    }else if(e.target.id === 'iLikeIt') {
+                        e.preventDefault();
+                        const iLikeIt = document.getElementById('iLikeIt');
+                        const no = putForm.no.value;
+                        const uid = commentForm.writer.value;
+                        const jsonData ={
+                            "uid" : uid,
+                            "no"  : no
+                        };
+                        const data = await fetchPost('/sboard/heart', jsonData);
+
+                        if(data != null){
+                            iLikeIt.innerHTML = `<i class="bi bi-hand-thumbs-up-fill"></i> 추천 ${data.heart}`;
+                        }else {
+                            if(await confirmModal('좋아요를 취소하시겠습니까?')){
+                                const delData = await fetchDelete(`/sboard/heart/${uid}/${no}`);
+                                iLikeIt.innerHTML = `<i class="bi bi-hand-thumbs-up-fill fs-5"></i> 추천 ${delData.heart}`;
+                            }
+                        }
+                    }
+                    // 파일 삭제 클릭
+                }if (e.target.tagName === 'A' && e.target.dataset.fno != null) {
+                    if(await confirmModal('파일을 삭제하시겠습니까?')){
+                        const fileLi = e.target.closest('li');
+                        const fno = e.target.dataset.fno;
+
+                        const data = await fetchDelete(`/sboard/file/${fno}`);
+                        if (data != null){
+                            fileLi.remove();
                         }
                     }
                 }
@@ -315,7 +350,7 @@
     </script>
     <h1 class="mt-4">게시판</h1>
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item active">000 글보기</li>
+        <li class="breadcrumb-item active">[[${boardName}]] 글보기</li>
     </ol>
     <!-- 내용 시작 -->
     <div class="card mb-2">
@@ -325,7 +360,7 @@
             <label th:text="${article.title}" class="fw-bold fs-5"></label>
         </div>
         <div class="card-body" id="articleCard">
-            <form action="#" id="putForm" enctype="multipart/form-data">
+            <form th:action="@{/article/modify}" id="putForm" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="cate" th:value="${pageResponseDTO.cate}">
                 <input type="hidden" name="pg" th:value="${pageResponseDTO.pg}">
                 <input type="hidden" name="no" th:value="${article.no}">
@@ -349,7 +384,7 @@
                             <a th:href="@{/file/download/{fno}(fno=${file.fno})}" class="fileLink"
                                th:data-fno="${file.fno}">[[${file.oName}]]</a>
                             <span class="badge text-bg-primary rounded-pill">[[${file.download}]]</span>
-                            <a href="#" class="link-grey visually-hidden" id="removeFile" th:data-fno="${file.fno}"><i class="bi bi-trash3-fill"></i> 삭제</a>
+                            <a href="#" class="link-grey visually-hidden removeFile" th:data-fno="${file.fno}"><i class="bi bi-trash3-fill"></i> 삭제</a>
                         </li>
                     </ul>
                 </div>
@@ -365,8 +400,11 @@
         <button type="button" class="btn btn-secondary" id="articleDelete">삭제</button>
     </div>
     <div class="text-center">
-        <a th:href="@{'/article/list?pg=' + ${pageResponseDTO.pg} + '&cate=' + ${pageResponseDTO.cate}}"
+        <a th:if="${pageResponseDTO.keyword == null}" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=${pageResponseDTO.pg})}"
            class="btn btn-primary">목록</a>
+        <a th:if="${pageResponseDTO.keyword != null}" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=${pageResponseDTO.pg}, type=${pageResponseDTO.type}, keyword=${pageResponseDTO.keyword})}"
+           class="btn btn-primary">목록</a>
+        <button class="btn btn-warning" id="iLikeIt" data-like="like"><i class="bi bi-hand-thumbs-up-fill fs-5"></i> 추천 [[${article.heart}]]</button>
     </div>
     <!-- 댓글 목록 -->
     <div id="commentContainer">

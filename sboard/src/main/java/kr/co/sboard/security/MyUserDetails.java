@@ -22,6 +22,10 @@ public class MyUserDetails implements UserDetails {
     // User entity
     private User user;
 
+    public MyUserDetails(User user){
+        this.user = user;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // 계정이 갖는 권한 목록

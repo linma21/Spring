@@ -40,7 +40,28 @@
             <if test="type == 'email'">email=#{value}</if>
         </where>
     </select>
+    <update id="updateUser">
+        UPDATE user SET
+                    nick =#{nick},
+                    email =#{email},
+                    zip =#{zip},
+                    addr1 =#{addr1},
+                    addr2 =#{addr2}
+                    where uid=#{uid}
+    </update>
     <update id="updateUserPass">
         UPDATE user SET pass=#{pass} where uid=#{uid}
+    </update>
+    <update id="withdrawal">
+        UPDATE user SET
+                hp = null,
+                role = null,
+                zip = null,
+                addr1 = null,
+                addr2 = null,
+                sms = null,
+                regDate = null,
+                leaveDate = NOW()
+                where uid=#{uid}
     </update>
 </mapper>

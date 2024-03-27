@@ -2,24 +2,9 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{/layout/defaultLayout}">
 <div class="container-fluid px-4" layout:fragment="content">
-    <script th:inline="javascript">
-        window.onload = function (){
-            const articleSubTitle = document.getElementById('articleSubTitle');
-            const cate = [[${pageResponseDTO.cate}]];
-            if(cate === 'faq'){
-                articleSubTitle.innerText = '자주묻는질문';
-            }else if(cate === 'notice'){
-                articleSubTitle.innerText = '공지사항';
-            }else if(cate === 'free'){
-                articleSubTitle.innerText = '자유게시판';
-            }else if(cate === 'qna'){
-                articleSubTitle.innerText = '묻고답하기';
-            }
-        }
-    </script>
     <h1 class="mt-4">게시판</h1>
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item active" id="articleSubTitle">000 게시판 글목록</li>
+        <li class="breadcrumb-item active" id="articleSubTitle">[[${boardName}]] 글목록</li>
     </ol>
     <!-- 내용 시작 -->
     <div class="card mb-4">
@@ -28,6 +13,21 @@
             게시글
         </div>
         <div class="card-body">
+            <!-- Navbar Search-->
+            <form th:action="@{/article/list}" class="float-end d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0 mb-2">
+                <!-- Example single danger button -->
+                <input type="hidden" name="cate" th:value="${pageResponseDTO.cate}">
+                <div class="btn-group mb-2">
+                    <select name="type" class="form-select me-1" aria-label="Disabled select example">
+                        <option value="title">제목</option>
+                        <option value="content">내용</option>
+                        <option value="title_content">제목+내용</option>
+                        <option value="writer">작성자</option>
+                    </select>
+                    <input class="form-control" type="text" name="keyword" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" />
+                    <button class="btn btn-primary" id="btnNavbarSearch" type="submit"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
             <table id="datatablesSimple"  class="table table-striped table-hover">
                 <thead class="table-dark">
                 <tr>
@@ -44,9 +44,10 @@
                     <tr th:each="article, loop:${pageResponseDTO.dtoList}">
                         <td>[[${pageResponseDTO.startNo - loop.index}]]</td>
                         <td>
-                            <a th:href="@{/article/view(no=${article.no}, pg=${pageResponseDTO.pg}, cate=${pageResponseDTO.cate})}">[[${article.title}]]</a>
+                            <a th:if="${pageResponseDTO.keyword == null}" th:href="@{/article/view(no=${article.no}, pg=${pageResponseDTO.pg}, cate=${pageResponseDTO.cate})}">[[${article.title}]] <span th:if="${article.heart > 1 }"> <i class="bi bi-bookmark-star-fill text-primary"></i></span></a>
+                            <a th:if="${pageResponseDTO.keyword != null}" th:href="@{/article/view(no=${article.no}, pg=${pageResponseDTO.pg}, cate=${pageResponseDTO.cate}, type=${pageResponseDTO.type}, keyword=${pageResponseDTO.keyword})}">[[${article.title}]] <span th:if="${article.heart > 1 }"> <i class="bi bi-bookmark-star-fill text-primary"></i></span></a>
                         </td>
-                        <td th:text="${article.writer}"></td>
+                        <td th:text="${article.nick}"></td>
                         <td th:text="${article.hit}"></td>
                         <td th:text="${#temporals.format(article.RDate,'yyyy-MM-dd')}"></td>
                     </tr>
@@ -57,28 +58,39 @@
             <ul class="pagination justify-content-center">
                 <!-- 첫 페이지 -->
                 <li class="page-item">
-                    <a class="page-link" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=1)}" aria-label="firstPage">
+                    <a th:if="${pageResponseDTO.keyword == null}" class="page-link" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=1)}" aria-label="firstPage">
+                    <span aria-hidden="true">&laquo;</span>
+                    </a>
+                    <a th:if="${pageResponseDTO.keyword != null}" class="page-link" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=1, type=${pageResponseDTO.type}, keyword=${pageResponseDTO.keyword})}" aria-label="firstPage">
                     <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
                 <!-- 이전 페이지 -->
                 <li th:if="${pageResponseDTO.prev}" class="page-item">
-                    <a class="page-link" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=${pageResponseDTO.start - 1})}">&#60;</a>
+                    <a  th:if="${pageResponseDTO.keyword == null}" class="page-link" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=${pageResponseDTO.start - 1})}">&#60;</a>
+                    <a  th:if="${pageResponseDTO.keyword != null}" class="page-link" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=${pageResponseDTO.start - 1}, type=${pageResponseDTO.type}, keyword=${pageResponseDTO.keyword})}">&#60;</a>
                 </li>
                 <!-- 페이지 넘버 반복 -->
                 <li class="page-item" th:each="num:${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
-                    <a th:classappend="${pageResponseDTO.pg == num} ? 'page-link current-page' : 'page-link'" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=${num})}">
+                    <a  th:if="${pageResponseDTO.keyword == null}" th:classappend="${pageResponseDTO.pg == num} ? 'page-link current-page' : 'page-link'" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=${num})}">
+                        [[${num}]]
+                    </a>
+                    <a  th:if="${pageResponseDTO.keyword != null}" th:classappend="${pageResponseDTO.pg == num} ? 'page-link current-page' : 'page-link'" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=${num}, type=${pageResponseDTO.type}, keyword=${pageResponseDTO.keyword})}">
                         [[${num}]]
                     </a>
                 </li>
 
                 <!-- 다음 페이지 -->
                 <li th:if="${pageResponseDTO.next}" class="page-item">
-                    <a class="page-link" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=${pageResponseDTO.end + 1})}">&#62;</a>
+                    <a th:if="${pageResponseDTO.keyword == null}" class="page-link" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=${pageResponseDTO.end + 1})}">&#62;</a>
+                    <a th:if="${pageResponseDTO.keyword != null}" class="page-link" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=${pageResponseDTO.end + 1}, type=${pageResponseDTO.type}, keyword=${pageResponseDTO.keyword})}">&#62;</a>
                 </li>
                 <!-- 마지막 페이지 -->
                 <li class="page-item">
-                    <a class="page-link" aria-label="last" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=${pageResponseDTO.last})}">
+                    <a  th:if="${pageResponseDTO.keyword == null}" class="page-link" aria-label="last" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=${pageResponseDTO.last})}">
+                    <span aria-hidden="true">&raquo;</span>
+                    </a>
+                    <a  th:if="${pageResponseDTO.keyword != null}" class="page-link" aria-label="last" th:href="@{/article/list(cate=${pageResponseDTO.cate}, pg=${pageResponseDTO.last}, type=${pageResponseDTO.type}, keyword=${pageResponseDTO.keyword})}">
                     <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>
@@ -87,7 +99,10 @@
 
     </div>
     <div class="text-end">
-        <a th:href="@{/article/write(cate=${pageResponseDTO.cate})}" class="btn btn-primary">글쓰기</a>
+        <a th:href="@{/article/write(
+        cate=${pageResponseDTO.cate},
+        type=${pageResponseDTO.type},
+        keyword=${pageResponseDTO.keyword})}" class="btn btn-primary">글쓰기</a>
     </div>
     <!-- 내용 끝 -->
 </div>

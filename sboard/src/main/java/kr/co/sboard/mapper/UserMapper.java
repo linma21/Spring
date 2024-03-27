@@ -23,6 +23,7 @@ public interface UserMapper {
     public List<UserDTO> selectUsers();
     public void updateUserPass(UserDTO userDTO);
     public void updateUser(UserDTO userDTO);
+    public void withdrawal(String uid);
     public void deleteUser(String uid);
 
     public TermsDTO selectTerms();

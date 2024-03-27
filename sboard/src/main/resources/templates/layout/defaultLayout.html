@@ -19,15 +19,10 @@
             <a class="navbar-brand ps-3" th:href="@{/index}">Spring 게시판</a>
             <!-- Sidebar Toggle-->
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
-            <!-- Navbar Search-->
-            <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-                <div class="input-group">
-                    <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" />
-                    <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
-                </div>
-            </form>
+
+
             <!-- Navbar-->
-            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+            <ul class="navbar-nav ms-auto me-0 me-md-3 my-2 my-md-0">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -142,6 +137,34 @@
                 </div>
             </div>
         </div>
+        <!-- Modal form -->
+        <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+            <div class="modal-dialog d-flex justify-content-center">
+                <div class="modal-content w-75">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel2"></h5>
+                        <button type="button" class="btn-close" id="passCancel" data-mdb-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <form id="passChangeForm">
+                            <!-- password input -->
+                            <div class="form-outline mb-4">
+                                <input class="form-control" id="inputPass1" type="password" name="pass1"
+                                       placeholder="5~16자의 영문 대/소문자, 숫자, 특수문자"/>
+                            </div>
+                            <div class="form-outline mb-4">
+                                <input class="form-control" id="inputPass2" type="password" name="pass2"
+                                       placeholder="비밀번호 입력 확인"/>
+                            </div>
+                            <div class="resultCheckPass d-block mb-1"></div>
+                            <!-- Submit button -->
+                            <button type="button" id="passSubmit" class="btn btn-primary btnOk" data-bs-dismiss="modal">변경</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script th:src="@{/js/scripts.js}"></script>
         <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>-->

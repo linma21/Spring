@@ -3,6 +3,8 @@ package kr.co.sboard.service;
 
 import kr.co.sboard.dto.ArticleDTO;
 import kr.co.sboard.dto.FileDTO;
+import kr.co.sboard.entity.Article;
+import kr.co.sboard.repository.ArticleRepository;
 import kr.co.sboard.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,7 @@ import java.util.*;
 public class FileService {
 
     private final FileRepository fileRepository;
+    private final ArticleRepository articleRepository;
 
     @Value("${file.upload.path}")
     private String fileUploadPath;
@@ -106,5 +109,21 @@ public class FileService {
         log.info("fileDownloadCount : " + resultMap.toString());
         return ResponseEntity.ok().body(resultMap);
 
+    }
+    @Transactional
+    public ResponseEntity<?> deleteFile(int fno){
+
+        kr.co.sboard.entity.File file = fileRepository.findById(fno).get();
+        if(file != null){
+            fileRepository.deleteById(fno);
+
+            // article file 수 --
+            Article article = articleRepository.findById(file.getAno()).get();
+            article.setFile(article.getFile() - 1);
+            articleRepository.save(article);
+
+            return ResponseEntity.ok().body(file);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("file not found");
     }
 }

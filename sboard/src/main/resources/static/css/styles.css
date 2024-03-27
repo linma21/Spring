@@ -2927,7 +2927,11 @@ textarea.form-control-lg {
   --bs-btn-disabled-bg: #0dcaf0;
   --bs-btn-disabled-border-color: #0dcaf0;
 }
-
+#iLikeIt {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #fdbf02;
+  --bs-btn-border-color: #fdbf02;
+}
 .btn-warning {
   --bs-btn-color: #000;
   --bs-btn-bg: #ffc107;

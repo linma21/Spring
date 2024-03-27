@@ -50,7 +50,7 @@ async function fetchPost(url, jsonData){
 
         if(!response.ok){
             console.log("fetchPost...4");
-            throw new Error('response not ok');
+            return null;
         }
 
         const data = await response.json();
@@ -153,6 +153,73 @@ function confirmModal(message) {
             resultModal.hide(); // 모달 닫기
             resolve(false); // 취소 결과값 반환
         };
+    });
+}
+function passFormModal(message, uid) {
+    const rePass  = /^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+]).{5,16}$/;
+    let isPassOk  = false;
+    const modal = document.getElementById('formModal');
+    const passCancel = document.getElementById('passCancel');
+    const passSubmit = document.getElementById('passSubmit');
+    const resultCheckPass = document.getElementsByClassName('resultCheckPass')[0];
+    modal.getElementsByClassName('modal-title')[0].innerText = message;
+    const resultModal = new bootstrap.Modal(modal);
+    resultModal.show(); // 모달 열기
+
+    // Promise를 사용하여 모달의 상태를 반환
+    return new Promise((resolve, reject) => {
+        // 폼 제출 이벤트를 감지하여 처리
+        const passChangeForm = document.getElementById('passChangeForm');
+        passChangeForm.pass1.addEventListener('focusout', function(e) {
+            e.preventDefault(); // 기본 폼 제출 동작 방지
+
+            // 사용자가 입력한 값을 가져와서 유효성 검사
+            const pass1 = passChangeForm.pass1.value;
+
+                if (!pass1.match(rePass)) {
+                    resultCheckPass.classList.add('invalid-feedback');
+                    resultCheckPass.innerText = '5~16자의 영문 대/소문자, 숫자, 특수문자를 사용해 주세요.';
+                    isPassOk =false;
+                } else {
+                    resultCheckPass.innerText = "";
+                    resultCheckPass.classList.remove('invalid-feedback');
+                    isPassOk = true;
+                }
+        });
+
+        passSubmit.addEventListener('click', async function (e) {
+            const pass1 = passChangeForm.pass1.value;
+            const pass2 = passChangeForm.pass2.value;
+            if (pass1 === pass2 && isPassOk === true) {
+                const jsonData = {
+                    "uid": uid,
+                    "pass": pass1
+                };
+                const data = await fetchPut('/sboard/user/findPasswordChange', jsonData);
+                if (data != null) {
+                    resolve(true);
+                    // 모달 닫기
+                    resultModal.hide();
+                }else {
+                    resolve(false);
+                    // 모달 닫기
+                    resultModal.hide();
+                }
+
+
+            } else {
+                resultCheckPass.classList.add('invalid-feedback');
+                resultCheckPass.innerText = '비밀번호가 일치하지 않습니다.';
+            }
+        });
+        passCancel.addEventListener('click', function(e) {
+            e.preventDefault(); // 기본 폼 제출 동작 방지
+
+            resolve(false);
+            // 모달 닫기
+            resultModal.hide();
+        });
+
     });
 }
 ////////댓글 수정 시 수정모드 해제

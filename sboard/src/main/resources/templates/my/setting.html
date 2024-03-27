@@ -12,14 +12,248 @@
 -->
 
 <div class="container-fluid px-4" layout:fragment="content">
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script th:inline="javascript">
+        let isPassOk  = false;
+        let isNickOk  = false;
+        let isEmailOk = false;
+
+        const rePass  = /^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+]).{5,16}$/;
+        const reName  = /^[가-힣]{2,10}$/
+        const reNick  = /^[a-zA-Zㄱ-힣0-9][a-zA-Zㄱ-힣0-9]*$/;
+        const reEmail = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
+        window.onload = function () {
+
+            const btnChangePass = document.getElementsByClassName('btnChangePass')[0];
+            const btnCheckNick = document.getElementsByClassName('btnCheckNick')[0];
+            const btnSendEmail = document.getElementsByClassName('btnSendEmail')[0];
+            const btnUserSetting = document.getElementById('btnUserSetting');
+            const userInfoForm = document.getElementById('userInfoForm');
+
+            // 기존 회원 정보
+            const uid   = [[${#authentication.principal.user.uid}]];
+            const nick  = [[${#authentication.principal.user.nick}]];
+            const pass  = [[${#authentication.principal.user.pass}]];
+            const email = [[${#authentication.principal.user.email}]];
+
+            //////////////////////////////////////////////////////////////////////////////////////
+            // 비밀번호 변경
+            //////////////////////////////////////////////////////////////////////////////////////
+            btnChangePass.onclick = async function (e){
+                e.preventDefault();
+                const result = await passFormModal('비밀번호 변경', uid);
+                if(result){
+                    alertModal("비밀번호 변경 완료되었습니다. 잠시 후 로그인 페이지로 이동합니다.");
+                    setTimeout(function() {
+                        location.href = '/sboard/user/login';
+                    }, 2500);
+
+                }else {
+                    alertModal("비밀번호 변경 실패했습니다.");
+                }
+            }
+
+
+            //////////////////////////////////////////////////////////////////////////////////////
+            // 회원 수정 유효성 확인
+            //////////////////////////////////////////////////////////////////////////////////////
+
+            // 비밀번호 ///////////////////////////////////////////////////////////////////////////
+
+            // 별명 //////////////////////////////////////////////////////////////////////////////
+            btnCheckNick.onclick = function (e) {
+                e.preventDefault();
+                //alertModal('btnCheckNick');
+
+                const spinner = this.getElementsByClassName('spinner')[0];
+                const type = this.dataset.type;
+                const inputValue = document.querySelector(`[name=${type}]`);
+
+                const value = userInfoForm.nick.value;
+                // 기존 정보가 아니면
+                if(value !== nick){
+                    spinner.classList.remove('d-none');
+                    setTimeout(async () => {
+                        const value = document.querySelector(`[name=${type}]`).value;
+                        // 유효성 검사
+                        if (!value.match(reNick)) {
+                            spinner.classList.add('d-none');
+                            alertModal('닉네임 형식에 맞지않습니다.');
+                            inputValue.classList.add('border-danger');
+                            isNickOk = false;
+                            return;
+                        }
+                        // 중복 체크
+                        const data = await fetchGet(`/sboard/user/${type}/${value}`);
+
+                        if (data.result > 0) {
+                            spinner.classList.add('d-none');
+                            alertModal('이미 존재하는 닉네임입니다.');
+                            inputValue.classList.add('border-danger');
+                            isNickOk = false;
+                        } else {
+                            spinner.classList.add('d-none');
+                            alertModal('사용 가능한 닉네임입니다.');
+                            inputValue.classList.remove('border-danger');
+                            inputValue.classList.add('border-success');
+                            isNickOk = true;
+                        }
+                    }, 1000);
+                }else{
+                    alertModal('(확인완료) 기존 닉네임과 같습니다.');
+                    inputValue.classList.add('border-success');
+                    isNickOk = true;
+                }
+            }
+            // 이메일 /////////////////////////////////////////////////////////////////////////////
+            const checkEmailCode = document.getElementById('checkEmailCode');
+            const emailCode = document.getElementById('emailCode');
+            const inputEmailCode = document.getElementById('inputEmailCode');
+            const btnCheckEmailCode = document.getElementsByClassName('btnCheckEmailCode')[0];
+
+            btnSendEmail.onclick = function (e) {
+                e.preventDefault();
+                const spinner = this.getElementsByClassName('spinner')[0];
+                const spanEmail = this.getElementsByClassName('spanEmail')[0];
+                const type = this.dataset.type;
+                const inputValue = document.querySelector(`[name=${type}]`);
+                const value = userInfoForm.email.value;
+
+                // 기존 정보가 아니면
+                if(value !== email) {
+                    // spinner 시작
+                    spinner.classList.remove('d-none');
+                    setTimeout(async () => {
+
+                        // 유효성 검사
+                        if (!value.match(reEmail)) {
+                            alertModal('이메일 형식에 맞지않습니다.');
+                            inputValue.classList.add('border-danger');
+
+                            isEmailOk = false;
+                            return;
+                        }
+                        // 중복 체크
+                        const data = await fetchGet(`/sboard/user/${type}/${value}`);
+                        if (data.result > 0) {
+                            spinner.classList.add('d-none');
+                            inputValue.classList.add('border-danger');
+                            alertModal('이미 사용중인 이메일입니다.');
+                            isEmailOk = false;
+                        } else {
+                            spanEmail.innerText = '이메일 인증코드 전송 중...';
+                            // 이메일 인증코드 입력 필드 활성화
+                            checkEmailCode.classList.remove('visually-hidden');
+
+                            spinner.classList.add('d-none');
+                        }
+                    }, 1000);
+                }else {
+                    alertModal('(인증완료) 기존 이메일과 같습니다.');
+                    inputValue.classList.add('border-success');
+                    isEmailOk = true;
+                }
+            }
+            // 인증코드 확인
+            btnCheckEmailCode.onclick = async function (e){
+                e.preventDefault();
+                const inputValue = document.querySelector(`[name='email']`);
+                const data = await fetchGet(`/sboard/email/${inputEmailCode.value}`);
+                if(!data.result){
+                    alertModal('이메일 인증을 실패했습니다. 인증번호를 다시 입력해 주십시오.');
+                    isEmailOk = false;
+                }else{
+                    alertModal('인증완료');
+                    inputValue.classList.add('border-success');
+                    isEmailOk = true;
+                }
+
+            }
+            // 주소 검색
+            const btnZip = document.getElementById('btnZip');
+            btnZip.addEventListener('click', function (e){
+                e.preventDefault();
+                postcode();
+            });
+
+            //////////////////////////////////////////////////////////////////////////////////////
+            // 회원 수정 전송
+            //////////////////////////////////////////////////////////////////////////////////////
+
+            btnUserSetting.onclick = async function (e){
+                e.preventDefault();
+
+                if (!isNickOk) {
+                    alertModal('별명이 유효하지 않습니다.');
+                    return false;
+                }
+                if (!isEmailOk) {
+                    alertModal('이메일이 유효하지 않습니다.');
+                    return false;
+                }
+                const newEmail = userInfoForm.email.value;
+                const newNick = userInfoForm.nick.value;
+                const newZip = userInfoForm.zip.value;
+                const newAddr1 = userInfoForm.addr1.value;
+                const newAddr2 = userInfoForm.addr2.value;
+
+                const jsonData = {
+                    "uid" : uid,
+                    "pass" : pass,
+                    "email": newEmail,
+                    "nick": newNick,
+                    "zip": newZip,
+                    "addr1": newAddr1,
+                    "addr2": newAddr2
+                };
+                console.log(jsonData);
+                const data = await fetchPost('/sboard/my/setting',jsonData);
+                if(data != null){
+                    alertModal("사용자 정보 수정이 완료되었습니다.");
+                    setTimeout(function() {
+                        location.href = '/sboard/my/setting';
+                    }, 3000);
+                }
+            }
+
+
+
+            //////////////////////////////////////////////////////////////////////////////////////
+            // 회원 탈퇴
+            //////////////////////////////////////////////////////////////////////////////////////
+            const btnWithdrawal = document.getElementById('btnWithdrawal');
+            const userSettingForm = document.getElementById('userSettingForm');
+
+            btnWithdrawal.onclick = async function (e){
+                e.preventDefault();
+                const result = await confirmModal('회원 탈퇴하시겠습니까?');
+                if(result === true){
+                    const uid = userSettingForm.uid.value;
+                    const data = await fetchGet(`/sboard/my/setting/${uid}`);
+
+                    if (data != null){
+                        alertModal(data.uid+"님 회원탈퇴 완료되었습니다.");
+                        setTimeout(function() {
+                            location.href = '/sboard/user/login';
+                        }, 2000);
+                    }else {
+                        alertModal("회원탈퇴 실패했습니다.");
+                    }
+                }
+            }
+
+        }
+
+    </script>
     <h3 class="mt-4 mb-4">나의 설정</h3>
 
     <!-- 내용 시작 -->
     <div class="card mb-4">
         <div class="card-header">
             <i class="fas fa-table me-1"></i>
-            회원정보 설정
+            회원정보
         </div>
+        <form id="userSettingForm">
         <div class="card-body">
             <table class="table">
                 <tr>
@@ -28,73 +262,88 @@
                 </tr>
                 <tr>
                     <td>비밀번호</td>
-                    <td><input class="form-control w-50" type="text" name="pass1"></td>
-                </tr>
-                <tr>
-                    <td>비밀번호 확인</td>
                     <td class="d-flex">
-                        <input class="form-control w-50" type="text" name="pass2">
-                        <button class="btn btn-primary ms-2">비밀번호 변경</button>
+                        <input class="form-control w-50" type="password" name="pass1">
+                        <button class="btn btn-primary ms-2 btnChangePass">비밀번호 변경</button>
                     </td>
                 </tr>
                 <tr>
                     <td>회원가입일</td>
-                    <td><input class="form-control border-0" type="text" name="regDate"  th:value="${#temporals.format(user.regDate,'yyyy-MM-dd')}"></td>
+                    <td><input class="form-control border-0" type="text" name="regDate"  th:value="${#temporals.format(#authentication.principal.user.regDate,'yyyy-MM-dd')}"></td>
                 </tr>
             </table>
         </div>
+        </form>
     </div>
     <div class="card mb-4">
-        <div class="card-header">
-            <i class="fas fa-table me-1"></i>
-            개인정보 수정
-        </div>
-        <div class="card-body">
-            <table class="table">
-                <tr>
-                    <td class="col-md-2">이름</td>
-                    <td class="col-md-10"><input class="form-control w-50" type="text" name="name" th:value="${user.name}"></td>
-                </tr>
-                <tr>
-                    <td>별명</td>
-                    <td class="d-flex">
-                        <input class="form-control w-50" type="text" name="nick" th:value="${user.nick}">
-                        <button class="btn btn-primary ms-2">중복확인</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>이메일</td>
-                    <td class="d-flex">
-                        <input class="form-control w-50" type="text" name="email" th:value="${user.email}">
-                        <button class="btn btn-primary ms-2">이메일 인증</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>휴대폰</td>
-                    <td>
-                        <input class="form-control w-50" type="text" name="hp" placeholder="휴대폰 입력" th:value="${user.hp}"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td>주소</td>
-                    <td>
-                        <input class="form-control w-25 mb-2" type="text" name="zip" readonly placeholder="우편번호 검색" th:value="${user.zip}"/>
-                        <input class="form-control w-75 mb-2" type="text" name="add1" readonly placeholder="기본주소 입력"  th:value="${user.addr1}"/>
-                        <input class="form-control w-75 mb-2" type="text" name="addr2" placeholder="상세주소 입력" th:value="${user.addr2}"/>
-                    </td>
-
-
-                </tr>
-
-            </table>
-
-        </div>
-
-
+        <form id="userInfoForm" th:action="@{/my/setting}" method="post">
+            <div class="card-header">
+                <i class="fas fa-table me-1"></i>
+                개인정보
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <tr>
+                        <td class="col-md-2">이름</td>
+                        <td class="col-md-10"><input class="form-control w-50" type="text" name="name" th:value="${#authentication.principal.user.name}"></td>
+                    </tr>
+                    <tr>
+                        <td>별명</td>
+                        <td class="d-flex">
+                            <input class="form-control w-50" type="text" name="nick" th:value="${#authentication.principal.user.nick}">
+                            <button class="btn btn-primary ms-2 btnCheckNick" data-type="nick">
+                                <span class="spinner spinner-border spinner-border-sm d-none"
+                                      aria-hidden="true"></span>
+                                <span class="spanNick" role="status">중복확인</span>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>이메일</td>
+                        <td class="d-flex" id="tdEmail">
+                            <input class="form-control w-50" type="text" name="email" th:value="${#authentication.principal.user.email}">
+                            <button class="btn btn-primary ms-2 btnSendEmail"  data-type="email">
+                                <span class="spinner spinner-border spinner-border-sm d-none"
+                                      aria-hidden="true"></span>
+                                <span class="spanEmail" role="status">이메일 인증</span>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr class="visually-hidden" id="checkEmailCode">
+                        <td>인증번호</td>
+                        <td class="d-flex">
+                            <input class="form-control w-50 " id="inputEmailCode" name="auth" type="text"
+                                   placeholder="인증번호"/>
+                            <button class="btn btn-primary ms-2 btnCheckEmailCode"  data-type="auth">
+                                <span class="spinner spinner-border spinner-border-sm d-none"
+                                      aria-hidden="true"></span>
+                                <span class="spanEmail" role="status">인증번호 확인</span>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>휴대폰</td>
+                        <td>
+                            <input class="form-control w-50" type="text" name="hp" placeholder="휴대폰 입력" th:value="${#authentication.principal.user.hp}" readonly/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>주소</td>
+                        <td>
+                            <input class="form-control w-25 mb-2" type="text" name="zip" id="inputZip" readonly placeholder="우편번호 검색" th:value="${#authentication.principal.user.zip}"/>
+                            <input class="form-control w-75 mb-2" type="text" name="addr1" id="inputAddr1" readonly placeholder="기본주소 입력"  th:value="${#authentication.principal.user.addr1}"/>
+                            <input class="form-control w-75 mb-2" type="text" name="addr2" id="inputAddr2" placeholder="상세주소 입력" th:value="${#authentication.principal.user.addr2}"/>
+                            <button class="btn btn-primary " id="btnZip">우편번호 검색</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </form>
     </div>
 
     <div class="text-end mb-4">
-        <a th:href="@{#}" class="btn btn-danger">회원탈퇴</a>
+        <a th:href="@{#}" class="btn btn-danger" id="btnWithdrawal">회원탈퇴</a>
+        <a th:href="@{#}" class="btn btn-secondary" id="btnUserSetting">회원수정</a>
     </div>
     <!-- 내용 끝 -->
 </div>

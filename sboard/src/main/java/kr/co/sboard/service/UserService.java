@@ -6,6 +6,7 @@ import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpSession;
 import kr.co.sboard.dto.TermsDTO;
 import kr.co.sboard.dto.UserDTO;
+import kr.co.sboard.entity.User;
 import kr.co.sboard.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -77,7 +78,21 @@ public class UserService {
         return mapper.selectCountUser(type, value);
     }
     public void selectUsers (){}
-    public void updateUser (UserDTO userDTO){}
+    public ResponseEntity<?> updateUser (UserDTO userDTO){
+
+            mapper.updateUser(userDTO);
+            UserDTO selUser = mapper.selectUser(userDTO.getUid());
+            return ResponseEntity.ok().body(selUser);
+    }
+
+    public ResponseEntity<?> withdrawal (String uid){
+        UserDTO selUser = mapper.selectUser(uid);
+        if(selUser != null){
+            mapper.withdrawal(uid);
+            return ResponseEntity.ok().body(selUser);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user not found");
+    }
     public ResponseEntity<?> updateUserPass (UserDTO userDTO){
         String encoded = passwordEncoder.encode(userDTO.getPass());
         UserDTO selUser = mapper.selectUser(userDTO.getUid());

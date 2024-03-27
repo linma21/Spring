@@ -23,6 +23,7 @@ public class SecurityUserService implements UserDetailsService {
 
         Optional<User> result = userRepository.findById(username); // result에 사용자 객체가 있음
 
+
         UserDetails userDetails = null;
         if(result.isPresent()){
             // 해당하는 사용자가 존재하면 인증 객체 생성

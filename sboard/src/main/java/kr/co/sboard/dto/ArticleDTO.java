@@ -22,10 +22,13 @@ public class ArticleDTO {
     private String content;
     private int file;
     private int hit;
+    private int heart;
     private String writer;
     private String regIp;
     private LocalDateTime rDate;
 
     private List<MultipartFile> files;
     private List<FileDTO> fileList;
+
+    private String nick;
 }
