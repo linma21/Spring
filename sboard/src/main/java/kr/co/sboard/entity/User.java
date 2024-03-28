@@ -5,8 +5,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Map;
 
 @Getter
 @Builder
@@ -15,7 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "user")
-public class User {
+public class User  {
 
     @Id
     private String uid;
@@ -30,11 +33,11 @@ public class User {
     private String addr2;
     private String regIp;
     private String sms;
+    private String provider;
 
     @CreationTimestamp
     private LocalDateTime regDate;
 
     private LocalDateTime leaveDate;
-
 
 }

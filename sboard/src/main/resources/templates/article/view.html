@@ -50,7 +50,7 @@
                                      <div class="w-100">
                                          <div class="d-flex justify-content-between align-items-center mb-3">
                                              <h6 class="text-primary fw-bold mb-0">
-                                                 ${comment.writer}
+                                                 ${comment.nick}
                                                  <span class="text-dark ms-2"></span>
                                              </h6>
                                              <div class="ml-auto">
@@ -59,21 +59,25 @@
                                          </div>
                                          <div class="d-flex justify-content-between align-items-center mb-3">
                                                  <textarea class="form-control" rows="3" readonly>${comment.content}</textarea>
-                                         </div>`;
+                                         </div>
+                                         <div class="float-end">
+                                              <div class="d-flex flex-row">
+                                                 <button class="btn btn-light btn-sm fw-bold" id="iLikeComment" data-like="commentlike" data-no="${comment.no}"><i class="fas fa-star text-warning me-2 fs-5"></i>${comment.heart}</button>
+                                             </div>
+                                         </div>
+                                          <div class="d-flex justify-content-between align-items-center">`;
 
                         <!-- 댓글 작성자와 현재 사용자가 동일한 경우에만 삭제 및 수정 버튼을 표시 -->
                         const commentBtn = `
-                                         <div class="d-flex justify-content-between align-items-center">
+
                                              <p class="small mb-0" style="color: #aaa;">
                                                      <a href="#" class="link-grey btnModify" data-mode="modify" data-no="${comment.no}"><i class="bi bi-pencil-fill"></i> 수정</a> •
                                                      <a href="#" class="link-grey btnRemove" data-mode="remove" data-no="${comment.no}"><i class="bi bi-trash3-fill"></i> 삭제</a>
                                              </p>
-                                             <div class="d-flex flex-row">
-                                                 <i class="fas fa-star text-warning me-2"></i>
-                                                 <i class="far fa-check-circle" style="color: #aaa;"></i>
-                                             </div>
-                                         </div>`;
+                                             `;
                         const commentEnd = `
+                                         </div>
+
                                      </div>
                                  </div>
                                  </div>
@@ -120,6 +124,7 @@
                 const pg = commentForm.querySelector('input[name="pg"]').value;
                 const parent = commentForm.querySelector('input[name="parent"]').value;
                 const url = `/sboard/comment?page=${pg}`;
+                const nick = [[${#authentication.principal.user.nick}]];
                 e.preventDefault();
                 const jsonData = {
                     "writer": commentForm.querySelector('input[name="writer"]').value,
@@ -143,7 +148,7 @@
                                                 <div class="w-100">
                                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                                         <h6 class="text-primary fw-bold mb-0">
-                                                            ${data.writer}
+                                                            ${nick}
                                                             <span class="text-dark ms-2"></span>
                                                         </h6>
                                                         <div class="ml-auto">
@@ -153,16 +158,17 @@
                                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                                          <textarea class="form-control" rows="3" readonly>${data.content}</textarea>
                                                     </div>
+                                                    <div class="float-end">
+                                                          <div class="d-flex flex-row">
+                                                             <button class="btn btn-light btn-sm fw-bold" data-like="commentlike" data-no="${data.no}"><i class="fas fa-star text-warning me-2 fs-5"></i>${comment.heart}</button>
+                                                         </div>
+                                                     </div>
                                                     <!-- 댓글 작성자와 현재 사용자가 동일한 경우에만 삭제 및 수정 버튼을 표시 -->
                                                     <div class="d-flex justify-content-between align-items-center">
                                                         <p class="small mb-0" style="color: #aaa;">
-                                                            <a href="#!" class="link-grey"><i class="bi bi-pencil-fill"></i> 수정</a>  •
-                                                            <a href="#!" class="link-grey"><i class="bi bi-trash3-fill"></i> 삭제</a>
-                                                        </p>
-                                                        <div class="d-flex flex-row">
-                                                            <i class="fas fa-star text-warning me-2"></i>
-                                                            <i class="far fa-check-circle" style="color: #aaa;"></i>
-                                                        </div>
+                                                                 <a href="#" class="link-grey btnModify" data-mode="modify" data-no="${data.no}"><i class="bi bi-pencil-fill"></i> 수정</a> •
+                                                                 <a href="#" class="link-grey btnRemove" data-mode="remove" data-no="${data.no}"><i class="bi bi-trash3-fill"></i> 삭제</a>
+                                                         </p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -330,6 +336,26 @@
                             if(await confirmModal('좋아요를 취소하시겠습니까?')){
                                 const delData = await fetchDelete(`/sboard/heart/${uid}/${no}`);
                                 iLikeIt.innerHTML = `<i class="bi bi-hand-thumbs-up-fill fs-5"></i> 추천 ${delData.heart}`;
+                            }
+                        }
+                        // 댓글 좋아요
+                    }else if(e.target.dataset.like === 'commentlike') {
+                        e.preventDefault();
+                        const iLikeComment = e.target;
+                        const no = e.target.dataset.no;
+                        const uid = commentForm.writer.value;
+                        const jsonData ={
+                            "uid" : uid,
+                            "no"  : no
+                        };
+                        const data = await fetchPost('/sboard/heart', jsonData);
+
+                        if(data != null){
+                            iLikeComment.innerHTML = `<i class="fas fa-star text-warning me-2 fs-5"></i>${data.heart}`;
+                        }else {
+                            if(await confirmModal('좋아요를 취소하시겠습니까?')){
+                                const delData = await fetchDelete(`/sboard/heart/${uid}/${no}`);
+                                iLikeComment.innerHTML = `<i class="fas fa-star text-warning me-2 fs-5"></i>${delData.heart}`;
                             }
                         }
                     }

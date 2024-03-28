@@ -1,5 +1,6 @@
 package kr.co.sboard.service;
 
+import com.querydsl.core.Tuple;
 import kr.co.sboard.dto.ArticleDTO;
 import kr.co.sboard.entity.Article;
 import kr.co.sboard.repository.ArticleRepository;
@@ -29,7 +30,27 @@ public class CommentService {
 
         return ResponseEntity.ok().body(saveArticle);
     }
+
     public ResponseEntity<List<ArticleDTO>> selectComments(int parent){
+        log.info("selectComments ...1: " + parent);
+        // ArticleRepository > findByParent() 쿼리 메서드 정의
+        List<Tuple> articleList = articleRepository.selectComments(parent);
+
+        List<ArticleDTO> articleDTOS = articleList.stream()
+                .map(tuple -> {
+                    log.info("tuple : "+ tuple);
+                    Article article = tuple.get(0, Article.class);
+                    String nick = tuple.get(1, String.class);
+                    article.setNick(nick);
+                    log.info("article : "+ article);
+                    return modelMapper.map(article, ArticleDTO.class);
+                })
+                .toList();
+
+        return ResponseEntity.ok().body(articleDTOS);
+    }
+
+    public ResponseEntity<List<ArticleDTO>> selectComments2(int parent){
         log.info("selectComments ...1: " + parent);
         // ArticleRepository > findByParent() 쿼리 메서드 정의
         List<Article> articleList = articleRepository.findByParent(parent);

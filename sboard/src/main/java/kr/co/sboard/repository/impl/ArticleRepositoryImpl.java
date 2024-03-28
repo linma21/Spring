@@ -74,16 +74,16 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
             log.info("expression" + expression);
 
         }else if(type.equals("writer")){
-            expression = qArticle.cate.eq(cate).and(qArticle.nick.contains(keyword));
+            expression = qArticle.cate.eq(cate).and(qArticle.parent.eq(0).and(qUser.nick.contains(keyword)));
             log.info("expression" + expression);
         }
         // select * from article where `cate`= '' and `type` contains(k) limit 0,10;
         QueryResults<Tuple> results = jpaQueryFactory
                 .select(qArticle, qUser.nick)
                 .from(qArticle)
-                .where(expression)
                 .join(qUser)
                 .on(qArticle.writer.eq(qUser.uid))
+                .where(expression)
                 .orderBy(qArticle.no.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -94,5 +94,21 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
 
         // 페이지 처리용 page 객체 리턴
         return new PageImpl<>(content, pageable, total);
+    }
+
+    // 댓글 목록
+    @Override
+    public List<Tuple> selectComments(int parent){
+
+        List<Tuple> results = jpaQueryFactory
+                .select(qArticle, qUser.nick)
+                .from(qArticle)
+                .where(qArticle.parent.eq(parent))
+                .join(qUser)
+                .on(qArticle.writer.eq(qUser.uid))
+                .fetch();
+
+        return results;
+
     }
 }

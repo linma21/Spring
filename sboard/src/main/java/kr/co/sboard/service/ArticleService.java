@@ -102,7 +102,9 @@ public class ArticleService {
                     Article article = tuple.get(0, Article.class);
                     String nick = tuple.get(1, String.class);
                     article.setNick(nick);
+
                     log.info("article : "+ article);
+
                     return modelMapper.map(article, ArticleDTO.class);
                 })
                 .toList();

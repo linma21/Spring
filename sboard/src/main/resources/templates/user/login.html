@@ -36,13 +36,19 @@
                                                 <input class="form-check-input" id="inputRememberPassword" type="checkbox" value="" />
                                                 <label class="form-check-label" for="inputRememberPassword">비밀번호 기억하기</label>
                                             </div>
-                                            <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                                            <div class="d-flex align-items-center justify-content-between mt-4 mb-2">
                                                 <div>
                                                     <a class="small" th:href="@{/user/findId}">아이디</a>
                                                     <a class="small" th:href="@{/user/findPassword}">비밀번호 찾기</a>
                                                 </div>
                                                 <input type="submit" class="btn btn-primary loginSubmit" value="로그인"/>
                                             </div>
+                                            <a th:href="@{/oauth2/authorization/google}">
+                                                <img th:src="@{/assets/img/custom_google_login_80.svg}">
+                                            </a>
+                                            <a th:href="@{/oauth2/authorization/kakao}">
+                                                <img height="38px" th:src="@{/assets/img/kakao_login_medium_narrow.png}">
+                                            </a>
                                         </form>
                                     </div>
                                     <div class="card-footer text-center py-3">

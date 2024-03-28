@@ -54,8 +54,8 @@
     </update>
     <update id="withdrawal">
         UPDATE user SET
+                pass = null,
                 hp = null,
-                role = null,
                 zip = null,
                 addr1 = null,
                 addr2 = null,
