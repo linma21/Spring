@@ -271,6 +271,7 @@
 
                         articleDelete.innerText = '취소';
                         articleModify.innerText = '수정완료';
+                        articleDelete.dataset.mode = 'artCancel';
                         e.target.dataset.mode = 'submit';
                         for (const roundedPill of roundedPills) {
                             roundedPill.classList.add('visually-hidden');

@@ -21,6 +21,7 @@ import java.util.Optional;
 public class CommentService {
     private final ArticleRepository articleRepository;
     private final ModelMapper modelMapper;
+    // 댓글 작성
     @Transactional
     public ResponseEntity<Article> insertComment(ArticleDTO articleDTO){
         Article article = modelMapper.map(articleDTO, Article.class);

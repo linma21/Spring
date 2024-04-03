@@ -1,25 +1,4 @@
-function formToJson(form) {
-    const formData = new FormData();
-    // 파일 입력 요소의 값 추가
-    const filesInput = form.querySelector('input[type="file"]');
-    if (filesInput) {
-        for (const file of filesInput.files) {
-            formData.append('files', file);
-        }
-    }
-
-    // 나머지 폼 요소의 값 추가 (JSON 형식으로 변환하여 formData에 추가)
-    const otherInputs = form.querySelectorAll('input:not([type="file"]), textarea');
-    const jsonData = {};
-    otherInputs.forEach(input => {
-        jsonData[input.name] = input.value;
-    });
-    // JSON 데이터를 FormData에 추가
-    formData.append('articleDTO', JSON.stringify(jsonData));
-
-    return formData;
-}
-
+// GET //
 async function fetchGet(url){
     console.log("fetchGet : "+url);
     try{
@@ -35,6 +14,7 @@ async function fetchGet(url){
         console.log(err);
     }
 }
+// POST //
 async function fetchPost(url, jsonData){
 
     console.log("fetchPost...1" +jsonData);
